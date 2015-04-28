@@ -244,7 +244,7 @@ public class VendorAction {
 		VendorDAO vendorDAO = new VendorDAO();
 		VendorBean vendor = vendorDAO.getVendor(phoneNumber);
 		if(vendor.getVendorId() == null){
-			return Utility.constructActionStatus("updateFacebookId", "No Vendor Exists");
+			throw new NotFoundException("updateFacebookId", "Vendor phone " + phoneNumber +" not registered ");
 		}else{
 			vendor.setFacebookUniqueId(facebookId);
 			vendorDAO.updateEmail(vendor);
@@ -255,15 +255,15 @@ public class VendorAction {
 	}
 	
 	@PUT
-	@Path("/updateTwitterId")  
+	@Path("{phone}/twitter/{twitterId}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String updateTwitterId(@QueryParam("phone") String phoneNumber, 
-							 @QueryParam("twitterId") String twitterId){
+	public String updateTwitterId(@PathParam("phone") String phoneNumber, 
+			@PathParam("twitterId") String twitterId){
 		
 		VendorDAO vendorDAO = new VendorDAO();
 		VendorBean vendor = vendorDAO.getVendor(phoneNumber);
 		if(vendor.getVendorId() == null){
-			return Utility.constructActionStatus("updateTwitterId", "No Vendor Exists");
+			throw new NotFoundException("updateTwitterId", "Vendor phone " + phoneNumber +" not registered ");
 		}else{
 			vendor.setTwitterUniqueId(twitterId);
 			vendorDAO.updateEmail(vendor);
@@ -274,16 +274,16 @@ public class VendorAction {
 		
 	}
 	
-	@GET
-	@Path("/updateGoogleId")  
+	@PUT
+	@Path("{phone}/google/{googleId}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String updateGoogleId(@QueryParam("phone") String phoneNumber, 
-							 @QueryParam("googleId") String googleId){
+	public String updateGoogleId(@PathParam("phone") String phoneNumber, 
+			@PathParam("googleId") String googleId){
 		
 		VendorDAO vendorDAO = new VendorDAO();
 		VendorBean vendor = vendorDAO.getVendor(phoneNumber);
 		if(vendor.getVendorId() == null){
-			return Utility.constructActionStatus("updateGoogleId", "No Vendor Exists");
+			throw new NotFoundException("updateGoogleId", "Vendor phone " + phoneNumber +" not registered ");
 		}else{
 			vendor.setGoogleUniqueId(googleId);
 			vendorDAO.updateEmail(vendor);
@@ -294,16 +294,16 @@ public class VendorAction {
 	}
 	
 	
-	@GET
-	@Path("/updatePhoneNumber")  
+	@PUT
+	@Path("{oldphone}/phone/{newphone}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String updatePhoneNumber(@QueryParam("phone") String phoneNumber, 
-							 @QueryParam("googleId") String newPhoneNumber){
+	public String updatePhoneNumber(@PathParam("phone") String phoneNumber, 
+			@PathParam("newphone") String newPhoneNumber){
 		
 		VendorDAO vendorDAO = new VendorDAO();
 		VendorBean vendor = vendorDAO.getVendor(phoneNumber);
 		if(vendor.getVendorId() == null){
-			return Utility.constructActionStatus("updatePhoneNumber", "No Vendor Exists");
+			throw new NotFoundException("updatePhoneNumber", "Vendor phone " + phoneNumber +" not registered ");
 		}else{
 			vendorDAO.updatePhoneNumber(vendor, newPhoneNumber);
 			vendor = vendorDAO.getVendor(newPhoneNumber);
@@ -313,15 +313,15 @@ public class VendorAction {
 	}
 	
 	
-	@GET
-	@Path("/updateLoginDate")  
+	@PUT
+	@Path("{phone}/logindate")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String updateLoginDate(@QueryParam("phone") String phoneNumber){
+	public String updateLoginDate(@PathParam("phone") String phoneNumber){
 		
 		VendorDAO vendorDAO = new VendorDAO();
 		VendorBean vendor = vendorDAO.getVendor(phoneNumber);
 		if(vendor.getVendorId() == null){
-			return Utility.constructActionStatus("updateLoginDate", "No Vendor Exists");
+			throw new NotFoundException("updateLoginDate", "Vendor phone " + phoneNumber +" not registered ");
 		}else{
 			vendorDAO.updateLoginDate(vendor);
 			vendor = vendorDAO.getVendor(phoneNumber);
@@ -333,28 +333,32 @@ public class VendorAction {
 	
 	
 	@GET	
-	@Path("/latlangsearch")  
+	@Path("latlang/{latitude}/{longitude}/{radius}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String locationSearch(@QueryParam("latitude") Double latitude, @QueryParam("longitude") Double longitude, @QueryParam("radius") BigDecimal radius){
+	public String latlangsearch(@PathParam("latitude") Double latitude, 
+			@PathParam("longitude") Double longitude, 
+			@PathParam("radius") BigDecimal radius){
 		VendorDAO vendorDAO = new VendorDAO();
 		List<VendorBean> vendorList = vendorDAO.getVendorByLatLong(latitude, longitude, radius);
 		if(vendorList.isEmpty()){
-			return Utility.constructActionStatus("latlangsearch", "No Vendor Exists Nearby");
+			throw new NotFoundException("latlangsearch", "No Vendor registered with latitude <" + latitude + ">, longitude <"+longitude+"> and radius <" + radius + ">");
 		}
-		return VendorJSON.constructListStatus("latlangsearch", "Pass", vendorList);
+		return VendorJSON.constructListStatus("latlangsearch", "Success", vendorList);
 	}
 	
 	
 	@GET	
-	@Path("/localitysearch")  
+	@Path("locality/{country}/{city}/{locality}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String locationSearch(@QueryParam("locality") String locality){
+	public String locationSearch(@PathParam("country") String country,
+			@PathParam("city") String city,
+			@PathParam("locality") String locality){
 		VendorDAO vendorDAO = new VendorDAO();
-		List<VendorBean> vendorList = vendorDAO.getVendorByLocality(locality);
+		List<VendorBean> vendorList = vendorDAO.getVendorByLocality(country, city, locality);
 		if(vendorList.isEmpty()){
-			return Utility.constructActionStatus("localitysearch", "No Vendor Exists Nearby");
+			return Utility.constructActionStatus("localitysearch", "No Vendor registered in country <" + country + ">, city <"+city+"> and locality <" + locality + ">");
 		}
-		return VendorJSON.constructListStatus("localitysearch", "Pass", vendorList);
+		return VendorJSON.constructListStatus("localitysearch", "Success", vendorList);
 	}
 	
 	

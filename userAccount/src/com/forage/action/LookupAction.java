@@ -5,7 +5,9 @@ import java.sql.Date;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -20,10 +22,10 @@ import com.forage.json.LookupJSON;
 public class LookupAction {
 
 	@GET	
-	@Path("/listType")  
+	@Path("{type}/{tag}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String getLookupType( @QueryParam("type") String lookupType,
-								@DefaultValue("") @QueryParam("tag") String tag){
+	public String getLookupTypeTag( @PathParam("type") String lookupType,
+								@PathParam("tag") String tag){
 		LookupTypeDAO lookupTypeDAO = new LookupTypeDAO();
 		LookupTypeBean lookupTypeBean = null;
 		lookupTypeBean = lookupTypeDAO.getLookupType(lookupType, tag);	
@@ -31,11 +33,21 @@ public class LookupAction {
 	}
 	
 	@GET	
-	@Path("/create")  
+	@Path("{type}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String createLookupCode(@QueryParam("type") String lookupType, 
-									@QueryParam("meaning") String value, 
-									@QueryParam("userId") BigDecimal userId){
+	public String getLookupType( @PathParam("type") String lookupType){
+		LookupTypeDAO lookupTypeDAO = new LookupTypeDAO();
+		LookupTypeBean lookupTypeBean = null;
+		lookupTypeBean = lookupTypeDAO.getLookupType(lookupType, "");	
+		return LookupJSON.construct(lookupTypeBean);
+	}
+	
+	@POST	
+	@Path("{type}/{meaning}/{user}")  
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String createLookupCode(@PathParam("type") String lookupType, 
+								@PathParam("meaning") String value, 
+								@PathParam("user") BigDecimal userId){
 		String meaning = value;
 		String valueUnderScore = value.replaceAll(" ", "_");
 		String valueUpperCase = valueUnderScore.toUpperCase();
@@ -43,6 +55,9 @@ public class LookupAction {
 		String valueCode = valueUpperCase;
 		if(valueUpperCase.length() > 50){
 			valueCode = valueUpperCase.substring(0, 49);
+			if(valueCode.endsWith("_")){
+				valueCode = valueUpperCase.substring(0, 48);
+			}
 		}
 		
 		LookupValueDAO lookupValueDAO = new LookupValueDAO();

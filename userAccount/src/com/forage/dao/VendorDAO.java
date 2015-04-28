@@ -685,7 +685,7 @@ public class VendorDAO {
 		return vendorList;
 	}
 
-	public List<VendorBean> getVendorByLocality(String locality) {
+	public List<VendorBean> getVendorByLocality(String country, String city, String locality) {
 
 		List<VendorBean> vendorList = new ArrayList<VendorBean>();
 		List<BigDecimal> vendorIDs = new ArrayList<BigDecimal>();
@@ -697,9 +697,11 @@ public class VendorDAO {
 		try {
 			dbConn = DBConnection.getConnection();
 
-			String query = "select * from vendors, addresses where addresses.locality LIKE ? and (vendors.address1 = addresses.address_id or vendors.address2 = addresses.address_id or vendors.address3 = addresses.address_id)";
+			String query = "select * from vendors, addresses where addresses.country LIKE ? and addresses.city LIKE ? and addresses.locality LIKE ? and (vendors.address1 = addresses.address_id or vendors.address2 = addresses.address_id or vendors.address3 = addresses.address_id)";
 			preparedStmt = dbConn.prepareStatement(query);
-			preparedStmt.setString(1, "%" + locality + "%");
+			preparedStmt.setString(1, "%" + country + "%");
+			preparedStmt.setString(2, "%" + city + "%");
+			preparedStmt.setString(3, "%" + locality + "%");
 			rs = preparedStmt.executeQuery();
 			while (rs.next()) {
 				vendorIDs.add(rs.getBigDecimal("vendor_id"));
