@@ -7,12 +7,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.forage.bean.ReviewBean;
 import com.forage.dao.ReviewDAO;
+import com.forage.exception.GoneException;
+import com.forage.exception.NotFoundException;
 import com.forage.json.ReviewJSON;
 import com.forage.user.Utility;
 
@@ -20,13 +23,13 @@ import com.forage.user.Utility;
 public class ReviewAction {
 
 	@GET
-	@Path("/get")  
+	@Path("{id}")  
 	@Produces(MediaType.APPLICATION_JSON) 
-	public String getReview(@QueryParam("reviewId") BigDecimal reviewId){
+	public String getReview(@PathParam("id") BigDecimal reviewId){
 		ReviewDAO reviewDAO = new ReviewDAO();
 		ReviewBean review = reviewDAO.getReview(reviewId);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review Get", "No Review Exists");
+			throw new NotFoundException("getReview", "Review <"+ reviewId + "> not found.");
 		}
 		return ReviewJSON.construct(review);
 	}
@@ -38,7 +41,7 @@ public class ReviewAction {
 		ReviewDAO reviewDAO = new ReviewDAO();
 		List<ReviewBean> reviewList = reviewDAO.getVendorReviews(vendorId);
 		if(reviewList == null || reviewList.size() == 0){
-			return Utility.constructActionStatus("Review Get Vendor", "No Review Exists");
+			throw new NotFoundException("getVendorReview", "Vendor <"+vendorId+"> has no reviews.");
 		}
 		return ReviewJSON.constructList(reviewList);
 	}
@@ -51,7 +54,7 @@ public class ReviewAction {
 		ReviewDAO reviewDAO = new ReviewDAO();
 		List<ReviewBean> reviewList = reviewDAO.getReviewsWrittenByCustomer(customerId);
 		if(reviewList == null || reviewList.size() == 0){
-			return Utility.constructActionStatus("Review Get Customer", "No Review Exists");
+			throw new NotFoundException("getReviewByCustomer", "Customer <"+customerId+"> has not written any reviews.");
 		}
 		return ReviewJSON.constructList(reviewList);
 	}
@@ -66,7 +69,7 @@ public class ReviewAction {
 		reviewDAO.updateReview(review);
 		reviewDAO.updateLastModified(review, userId);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review enable", "No Review Exists");
+			throw new NotFoundException("enableReview", "Review <"+reviewId+"> not exists.");
 		}
 		return ReviewJSON.construct(review);
 	}
@@ -80,7 +83,7 @@ public class ReviewAction {
 		ReviewBean review = reviewDAO.getReview(reviewId);
 		reviewDAO.updateLastModified(review, userId);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review disable", "No Review Exists");
+			throw new NotFoundException("disableReview", "Review <"+reviewId+"> not exists.");
 		}
 		return ReviewJSON.construct(review);
 	}
@@ -94,7 +97,7 @@ public class ReviewAction {
 		ReviewDAO reviewDAO = new ReviewDAO();
 		reviewDAO.updateReview(review);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review update", "Fails");
+			throw new NotFoundException("updateReview", "Review not exists.");
 		}
 		return ReviewJSON.construct(review);
 	}
@@ -107,7 +110,7 @@ public class ReviewAction {
 		ReviewDAO reviewDAO = new ReviewDAO();
 		reviewDAO.createReview(review);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review create", "Fails");
+			throw new GoneException("createReview", "Review <" + review.getRemarks() +"> not created.");
 		}
 		return ReviewJSON.construct(review);
 	}
@@ -121,7 +124,7 @@ public class ReviewAction {
 		ReviewBean review = reviewDAO.getReview(reviewId);
 		reviewDAO.updateLastModified(review, userId);
 		if(review == null || review.getReviewId() == null){
-			return Utility.constructActionStatus("Review enable", "No Review Exists");
+			throw new NotFoundException("approveReview", "Review <"+reviewId+"> not exists.");
 		}
 		return ReviewJSON.construct(review);
 	}

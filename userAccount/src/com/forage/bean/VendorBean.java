@@ -1,11 +1,17 @@
 package com.forage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-public class VendorBean {
+public class VendorBean implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 557431948904918619L;
+	
 	BigDecimal vendorId;
 	BigDecimal parentVendorId;
 	String name;
