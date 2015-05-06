@@ -72,7 +72,6 @@ public class VendorAction {
 	
 	@GET
 	@Path("{id}")
-	@javax.annotation.security.RolesAllowed({ "Editor", "Contributor" })
 	@Produces(MediaType.APPLICATION_JSON) 
 	public String findById(@PathParam("id") BigDecimal vendorId){
 		VendorDAO vendorDAO = new VendorDAO();
