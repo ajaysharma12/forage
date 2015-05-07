@@ -10,8 +10,8 @@
       <param-value>com.forage</param-value>
     </init-param>
     <init-param>
-        <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-        <param-value>true</param-value>
+      <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+      <param-value>true</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -19,10 +19,10 @@
     <servlet-name>Jersey REST Service</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
-    <resource-ref>
-      <description>DB Connection</description>
-      <res-ref-name>jdbc/foragedb</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-      <res-auth>Container</res-auth>
+  <resource-ref>
+    <description>DB Connection</description>
+    <res-ref-name>jdbc/foragedb</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
   </resource-ref>
 </web-app>

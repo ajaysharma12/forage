@@ -1,4 +1,4 @@
-package com.forage.action;
+package com.forage.intercept;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
@@ -11,8 +11,8 @@ public class TestFilterFirst implements ResourceFilter, ContainerRequestFilter {
 	@Override
 	public ContainerRequest filter(ContainerRequest arg0) {
 		//Filter logic goes here.
-		System.out.println("Hello asdf2");
-		System.out.println("Hello3");
+		System.out.println("Hello Test Filter 1");
+		System.out.println("Hello Test Filter 2");
 		return arg0;
 	}
 

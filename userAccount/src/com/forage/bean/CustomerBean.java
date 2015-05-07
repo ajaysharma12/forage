@@ -2,10 +2,11 @@ package com.forage.bean;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CustomerBean implements Serializable {
+public class CustomerBean implements Serializable, Principal {
 	
 	/**
 	 * 
@@ -216,6 +217,11 @@ public class CustomerBean implements Serializable {
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return this.firstName;
 	}
 	
 }
