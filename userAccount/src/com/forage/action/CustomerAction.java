@@ -11,14 +11,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import com.forage.bean.CustomerBean;
 import com.forage.dao.CustomerDAO;
 import com.forage.exception.AlreadyExistException;
 import com.forage.exception.NotFoundException;
 import com.forage.json.CustomerJSON;
-import com.forage.user.Utility;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;

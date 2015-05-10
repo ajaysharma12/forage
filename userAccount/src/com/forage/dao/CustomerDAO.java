@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.forage.bean.CustomerBean;
+import com.forage.bean.UserPreferenceBean;
 import com.forage.exception.AlreadyExistException;
+import com.forage.exception.NotFoundException;
 import com.forage.user.DBConnection;
 
 public class CustomerDAO {
@@ -128,13 +130,20 @@ public class CustomerDAO {
 			customer.setShipAddrBean(addrDAO.getAddress(customer.getShippingAddress()));
 		}
 		
-		// Address DAO Ends				
+		// Address DAO Ends
+		
+		// Customer Preference Starts
+		UserPreferenceDAO userPreferenceDAO = new UserPreferenceDAO(); 
+		UserPreferenceBean preference = userPreferenceDAO.getUserPreference(customer.getCustomerId());
+		customer.setPreference(preference);
+		// Customer Preference Ends
+		
 		
 		return customer;
 	}
 	
 	public CustomerBean getCustomer(BigDecimal customerId) {
-		CustomerBean customer = new CustomerBean();
+		CustomerBean customer = null;
 		String customerPhoneNumber = null;
 		
 		Connection dbConn  = null;
@@ -161,8 +170,10 @@ public class CustomerDAO {
 	        if (stmt  != null) try { stmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
-
-		customer = getCustomer(customerPhoneNumber);
+		if(customerPhoneNumber != null)
+			customer = getCustomer(customerPhoneNumber);
+		else
+			throw new NotFoundException("ReviewAction.getCustomer", "Customer not provided.");
 		
 		return customer;
 	}

@@ -35,13 +35,6 @@ public class CustomerBean implements Serializable, Principal {
 	BigDecimal address3;
 	BigDecimal shippingAddress;
 	
-	AddressBean addrBean1;
-	AddressBean addrBean2;
-	AddressBean addrBean3;
-	AddressBean shipAddrBean;
-	
-	ArrayList<FavoriteBean> favoriteVendors;
-	
 	String activeFlag;
 	String approveFlag;
 	BigDecimal createdBy;
@@ -49,6 +42,15 @@ public class CustomerBean implements Serializable, Principal {
 	BigDecimal lastUpdatedBy;
 	Date lastUpdateDate;
 	Date lastLoginDate;
+	
+	AddressBean addrBean1;
+	AddressBean addrBean2;
+	AddressBean addrBean3;
+	AddressBean shipAddrBean;
+	
+	ArrayList<FavoriteBean> favoriteVendors;
+	
+	UserPreferenceBean preference;
 	
 	public BigDecimal getCustomerId() {
 		return customerId;
@@ -222,6 +224,12 @@ public class CustomerBean implements Serializable, Principal {
 	public String getName() {
 		// TODO Auto-generated method stub
 		return this.firstName;
+	}
+	public UserPreferenceBean getPreference() {
+		return preference;
+	}
+	public void setPreference(UserPreferenceBean preference) {
+		this.preference = preference;
 	}
 	
 }

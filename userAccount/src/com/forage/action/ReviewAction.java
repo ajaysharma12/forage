@@ -17,7 +17,6 @@ import com.forage.dao.ReviewDAO;
 import com.forage.exception.GoneException;
 import com.forage.exception.NotFoundException;
 import com.forage.json.ReviewJSON;
-import com.forage.user.Utility;
 
 @Path("/review")
 public class ReviewAction {
