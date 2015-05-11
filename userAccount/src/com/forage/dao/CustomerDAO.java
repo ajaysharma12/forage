@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import com.forage.bean.CustomerBean;
+import com.forage.bean.FavoriteBean;
 import com.forage.bean.UserPreferenceBean;
 import com.forage.exception.AlreadyExistException;
 import com.forage.exception.NotFoundException;
@@ -58,8 +60,20 @@ public class CustomerDAO {
 		
 		if (insertStatus) {
 			customer = getCustomer(customer.getPhoneNumber());
+			customer.setPreference(createUserPreference(customer));
 		}
 
+	}
+	
+	private UserPreferenceBean createUserPreference(CustomerBean customer){
+		UserPreferenceDAO userPreferenceDAO = new UserPreferenceDAO();
+		UserPreferenceBean preference = new UserPreferenceBean();
+		preference.setUserId(customer.getCustomerId());
+		preference.setSearchRadius(new BigDecimal(5));
+		preference.setCreatedBy(customer.getCustomerId());
+		preference.setLastUpdatedBy(customer.getCustomerId());
+		userPreferenceDAO.insert(preference);
+		return preference;
 	}
 
 	public CustomerBean getCustomer(String phoneNumber) {
@@ -138,6 +152,11 @@ public class CustomerDAO {
 		customer.setPreference(preference);
 		// Customer Preference Ends
 		
+		// Favorite List Starts
+		FavoriteDAO favoriteDAO = new FavoriteDAO();
+		List<FavoriteBean> favoriteList = favoriteDAO.getFavoriteList(customer.getCustomerId());
+		customer.setFavoriteVendors(favoriteList);
+		// Favorite List ends
 		
 		return customer;
 	}

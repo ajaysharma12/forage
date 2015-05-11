@@ -3,8 +3,8 @@ package com.forage.bean;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CustomerBean implements Serializable, Principal {
 	
@@ -48,7 +48,7 @@ public class CustomerBean implements Serializable, Principal {
 	AddressBean addrBean3;
 	AddressBean shipAddrBean;
 	
-	ArrayList<FavoriteBean> favoriteVendors;
+	List<FavoriteBean> favoriteVendors;
 	
 	UserPreferenceBean preference;
 	
@@ -208,10 +208,10 @@ public class CustomerBean implements Serializable, Principal {
 	public void setShipAddrBean(AddressBean shipAddrBean) {
 		this.shipAddrBean = shipAddrBean;
 	}
-	public ArrayList<FavoriteBean> getFavoriteVendors() {
+	public List<FavoriteBean> getFavoriteVendors() {
 		return favoriteVendors;
 	}
-	public void setFavoriteVendors(ArrayList<FavoriteBean> favoriteVendors) {
+	public void setFavoriteVendors(List<FavoriteBean> favoriteVendors) {
 		this.favoriteVendors = favoriteVendors;
 	}
 	public String getGender() {

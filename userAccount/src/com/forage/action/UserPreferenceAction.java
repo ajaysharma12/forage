@@ -53,7 +53,7 @@ public class UserPreferenceAction {
 	@Path("radius/{phone}/{radius}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateSearchRadius(String phone, BigDecimal radius){
+	public String updateSearchRadius(@PathParam("phone") String phone, @PathParam("radius") BigDecimal radius){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setSearchRadius(radius);
@@ -65,7 +65,7 @@ public class UserPreferenceAction {
 	@Path("breakfasttime/{phone}/{timelookup}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateBreakfast(String phone, String timelookup){
+	public String updateBreakfast(@PathParam("phone") String phone, @PathParam("timelookup") String timelookup){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setBreakfastTime(timelookup);
@@ -77,7 +77,7 @@ public class UserPreferenceAction {
 	@Path("lunchtime/{phone}/{timelookup}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateLunchTime(String phone, String timelookup){
+	public String updateLunchTime(@PathParam("phone") String phone, @PathParam("timelookup") String timelookup){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setLunchTime(timelookup);
@@ -89,7 +89,7 @@ public class UserPreferenceAction {
 	@Path("dinnertime/{phone}/{timelookup}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateDinnerTime(String phone, String timelookup){
+	public String updateDinnerTime(@PathParam("phone") String phone, @PathParam("timelookup") String timelookup){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setDinnerTime(timelookup);
@@ -101,7 +101,7 @@ public class UserPreferenceAction {
 	@Path("brunchtime/{phone}/{timelookup}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateBrunchTime(String phone, String timelookup){
+	public String updateBrunchTime(@PathParam("phone") String phone, @PathParam("timelookup") String timelookup){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setBrunchTime(timelookup);
@@ -113,7 +113,7 @@ public class UserPreferenceAction {
 	@Path("cuisine1/{phone}/{cuisinetype}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateCuisine1(String phone, String cuisine){
+	public String updateCuisine1(@PathParam("phone") String phone, @PathParam("cuisinetype") String cuisine){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setCuisine1(cuisine);
@@ -125,7 +125,7 @@ public class UserPreferenceAction {
 	@Path("cuisine2/{phone}/{cuisinetype}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateCuisine2(String phone, String cuisine){
+	public String updateCuisine2(@PathParam("phone") String phone, @PathParam("cuisinetype") String cuisine){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setCuisine2(cuisine);
@@ -137,7 +137,7 @@ public class UserPreferenceAction {
 	@Path("cuisine3/{phone}/{cuisinetype}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateCuisine3(String phone, String cuisine){
+	public String updateCuisine3(@PathParam("phone") String phone, @PathParam("cuisinetype") String cuisine){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setCuisine3(cuisine);
@@ -149,7 +149,7 @@ public class UserPreferenceAction {
 	@Path("cuisine4/{phone}/{cuisinetype}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateCuisine4(String phone, String cuisine){
+	public String updateCuisine4(@PathParam("phone") String phone, @PathParam("cuisinetype") String cuisine){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		preference.setCuisine4(cuisine);
@@ -158,10 +158,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("newvendoralert/{onoroff}")  
+	@Path("newvendoralert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setNewVendorAlert(String phone, String onOff){
+	public String setNewVendorAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -174,10 +174,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("vendorupdate/{onoroff}")  
+	@Path("vendorupdate/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setVendorUpdate(String phone, String onOff){
+	public String setVendorUpdate(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -190,10 +190,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("menualert/{onoroff}")  
+	@Path("menualert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setMenuAlert(String phone, String onOff){
+	public String setMenuAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -206,10 +206,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("reviewalert/{onoroff}")  
+	@Path("reviewalert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setReviewAlert(String phone, String onOff){
+	public String setReviewAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -222,10 +222,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("photoalert/{onoroff}")  
+	@Path("photoalert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setPhotoAlert(String phone, String onOff){
+	public String setPhotoAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -238,10 +238,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("friendalert/{onoroff}")  
+	@Path("friendalert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setFriendAlert(String phone, String onOff){
+	public String setFriendAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){
@@ -254,10 +254,10 @@ public class UserPreferenceAction {
 	}
 	
 	@PUT
-	@Path("appalert/{onoroff}")  
+	@Path("appalert/{phone}/{onoroff}")  
 	@Consumes(MediaType.APPLICATION_JSON) 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setAppAlert(String phone, String onOff){
+	public String setAppAlert(@PathParam("phone") String phone, @PathParam("onoroff") String onOff){
 		UserPreferenceDAO preferenceDAO = new UserPreferenceDAO();
 		UserPreferenceBean preference = preferenceDAO.getPreference(phone);
 		if("ON".equals(onOff)){

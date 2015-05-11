@@ -47,7 +47,7 @@ public class CustomerAction {
 		CustomerDAO custDAO = new CustomerDAO();
 		CustomerBean customer = custDAO.getCustomer(phoneNumber);
 		if(customer.getCustomerId() != null){
-			throw new AlreadyExistException("addCustomer", "Phone is registered with Customer Id : " + customer.getCustomerId());
+			throw new AlreadyExistException("CustomerAction.addCustomer", "Phone is registered with Customer Id : " + customer.getCustomerId());
 		}else{
 			customer.setFirstName(firstName);
 			customer.setLastName(lastName);
@@ -55,7 +55,7 @@ public class CustomerAction {
 			custDAO.insertNewCustomerNameNumber(customer);
 			customer = custDAO.getCustomer(phoneNumber);	
 		}
-		return CustomerJSON.constructStatus("addCustomer", "Success", customer);
+		return CustomerJSON.constructStatus("CustomerAction.addCustomer", "Success", customer);
 	}
 		
 	
@@ -66,7 +66,7 @@ public class CustomerAction {
 		CustomerDAO custDAO = new CustomerDAO();
 		CustomerBean customer = null;
 		customer = custDAO.getCustomer(customerId);
-		return CustomerJSON.constructStatus("findById", "Success", customer);
+		return CustomerJSON.constructStatus("CustomerAction.findById", "Success", customer);
 	}
 	
 	
@@ -76,11 +76,13 @@ public class CustomerAction {
 	public String getCustomer(@PathParam("phone") String phoneNumber){
 		CustomerDAO custDAO = new CustomerDAO();
 		CustomerBean customer = custDAO.getCustomer(phoneNumber);
-		if(customer.getCustomerId() == null){
-			throw new NotFoundException("getCustomer", "customer Phone " + phoneNumber +" not registered ");
+		if(customer == null || customer.getCustomerId() == null){
+			String customerString = this.addCustomer(phoneNumber, "Forager", null);
+			return customerString;
+//			throw new NotFoundException("getCustomer", "customer Phone " + phoneNumber +" not registered ");
 		}
-//		return Response.ok(CustomerJSON.construct(customer), MediaType.APPLICATION_JSON).build();
-		return CustomerJSON.constructStatus("getDetails", "Success", customer);
+
+		return CustomerJSON.constructStatus("CustomerAction.getDetails", "Success", customer);
 	}
 	
 	
@@ -91,7 +93,7 @@ public class CustomerAction {
 		CustomerDAO custDAO = new CustomerDAO();
 		CustomerBean customer = custDAO.getCustomer(phoneNumber);
 		if(customer.getCustomerId() == null){
-			throw new NotFoundException("getCustomerBean", "Phone " + phoneNumber +" not registered ");
+			throw new NotFoundException("CustomerAction.getCustomerBean", "Phone " + phoneNumber +" not registered ");
 		}
 		return CustomerJSON.construct(customer);
 	}
