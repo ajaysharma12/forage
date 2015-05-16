@@ -22,9 +22,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.forage.bean.ImageBean;
 import com.forage.bean.MenuBean;
+import com.forage.dao.ImageDAO;
 import com.forage.dao.MenuDAO;
 import com.forage.json.ImageJSON;
-import com.forage.user.UtilityFtp;
+import com.forage.user.ImageUtility;
+import com.forage.user.Utility;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -47,7 +49,7 @@ public class ImageAction {
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail
 			, 
-			@FormDataParam("id") BigDecimal custVendOrMenuId, 
+			@FormDataParam("id") BigDecimal id, 
 			@FormDataParam ("category") String imageCategory
 			)
 	{
@@ -59,40 +61,43 @@ public class ImageAction {
 		
 		switch(imageCategory){
 		case "VENDOR" : 
-			imageBean.setVendorId(custVendOrMenuId);
-			imageBean.setCreatedBy(custVendOrMenuId);
-			imageBean.setLastUpdatedBy(custVendOrMenuId);
+			imageBean.setVendorId(id);
+			imageBean.setCreatedBy(id);
+			imageBean.setLastUpdatedBy(id);
 			break;
 		case "CUSTOMER" : 
-			imageBean.setCustomerId(custVendOrMenuId);
-			imageBean.setCreatedBy(custVendOrMenuId);
-			imageBean.setLastUpdatedBy(custVendOrMenuId);
+			imageBean.setCustomerId(id);
+			imageBean.setCreatedBy(id);
+			imageBean.setLastUpdatedBy(id);
 			break;
 		case "MENU" :
-			imageBean.setMenuId(custVendOrMenuId);
+			imageBean.setMenuId(id);
 			menuDAO = new MenuDAO();
-			menu = menuDAO.getMenu(custVendOrMenuId);			
+			menu = menuDAO.getMenu(id);			
 			imageBean.setCreatedBy(menu.getVendorId());
 			imageBean.setLastUpdatedBy(menu.getVendorId());
 			break;
 		case "MENUITEM" :
-			imageBean.setMenuId(custVendOrMenuId);
+			imageBean.setMenuId(id);
 			menuDAO = new MenuDAO();
-			menu = menuDAO.getMenu(custVendOrMenuId);			
+			menu = menuDAO.getMenu(id);			
 			imageBean.setCreatedBy(menu.getVendorId());
 			imageBean.setLastUpdatedBy(menu.getVendorId());
 			break;
 		default :
-			imageBean.setCustomerId(custVendOrMenuId);
+			imageBean.setCustomerId(id);
 			break;
 		}
-		imageBean.setImageType(fileDetail.getType());
-		imageBean.setImageName(fileDetail.getFileName());
+		imageBean.setImageType(Utility.getFileExtension(fileDetail.getName()));
+		imageBean.setImageName(Utility.getFileNameWithoutExtension(fileDetail.getName()));
 		imageBean.setImageSize(new BigDecimal(fileDetail.getSize()));
 		imageBean.setCreatedDate(fileDetail.getCreationDate());
 		imageBean.setLastUpdateDate(fileDetail.getModificationDate());
 		
-		UtilityFtp.putFile(imageBean, uploadedInputStream);
+		ImageUtility.uploadFile(imageBean, uploadedInputStream);
+		
+		ImageDAO imageDAO = new ImageDAO();
+		imageDAO.createImage(imageBean);
 		
 		return ImageJSON.construct(imageBean);
 		

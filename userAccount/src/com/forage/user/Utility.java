@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.commons.io.FilenameUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
  
@@ -81,17 +82,17 @@ public class Utility {
     
   
     public  final static String getDateFormatted(  )   {
-          DateFormat df = new SimpleDateFormat( "yyyy-MM-dd" ) ;
+          DateFormat df = new SimpleDateFormat( "yyyyMMdd" ) ;
           df.setTimeZone( TimeZone.getTimeZone( "IST" )  ) ;
           return ( df.format( new Date(  )  )  ) ;
       }
     public  final static String getTimeFormatted(  )   {
-          DateFormat df = new SimpleDateFormat( "hh-mm-ss" ) ;
+          DateFormat df = new SimpleDateFormat( "hhmmss" ) ;
           df.setTimeZone ( TimeZone.getTimeZone ( "IST" )  ) ;
           return ( df.format( new Date(  )  )  ) ;
       }
     
-    public static final String getExtension(final String filename) {
+    public static final String getFileExtension(final String filename) {
 		if (filename == null)
 			return null;
 		final String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
@@ -100,10 +101,22 @@ public class Utility {
 		return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex + 1);
 	}
     
+    public static final String getFileNameWithoutExtension(final String filename) {
+		if (filename == null)
+			return null;
+		String fileNameWithOutExt = FilenameUtils.removeExtension(filename);
+		return fileNameWithOutExt;
+	}
+    
     
     public static int getCurrentYear() {
     	int year = Calendar.getInstance().get(Calendar.YEAR);
         return year;
+    }
+    
+    public static int getCurrentMonth(){
+    	int month = Calendar.getInstance().get(Calendar.MONTH);
+    	return month+1;
     }
     
     public static java.sql.Date convertFromJAVADateToSQLDate(java.util.Date javaDate) {
