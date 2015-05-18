@@ -15,7 +15,10 @@ public class VendorBean implements Serializable {
 	BigDecimal vendorId;
 	BigDecimal parentVendorId;
 	String name;
+	String contactPerson;
 	String phoneNumber;
+	String phoneNumber2;
+	String phoneNumber3;
 	Double lastGPSLatitude;
 	Double lastGPSLongitude;
 	String password;
@@ -46,6 +49,11 @@ public class VendorBean implements Serializable {
 	
 	BigDecimal minPriceMeal;
 	BigDecimal maxPriceMeal;
+	
+	String breakfastTime;
+	String lunchTime;
+	String brunchTime;
+	String dinnerTime;
 	
 	BigDecimal createdBy;
 	Date createdDate;
@@ -259,5 +267,46 @@ public class VendorBean implements Serializable {
 	public void setProfileImageId(BigDecimal profileImageId) {
 		this.profileImageId = profileImageId;
 	}
-	
+	public String getContactPerson() {
+		return contactPerson;
+	}
+	public void setContactPerson(String contactPerson) {
+		this.contactPerson = contactPerson;
+	}
+	public String getPhoneNumber2() {
+		return phoneNumber2;
+	}
+	public void setPhoneNumber2(String phoneNumber2) {
+		this.phoneNumber2 = phoneNumber2;
+	}
+	public String getPhoneNumber3() {
+		return phoneNumber3;
+	}
+	public void setPhoneNumber3(String phoneNumber3) {
+		this.phoneNumber3 = phoneNumber3;
+	}
+	public String getBreakfastTime() {
+		return breakfastTime;
+	}
+	public void setBreakfastTime(String breakfastTime) {
+		this.breakfastTime = breakfastTime;
+	}
+	public String getLunchTime() {
+		return lunchTime;
+	}
+	public void setLunchTime(String lunchTime) {
+		this.lunchTime = lunchTime;
+	}
+	public String getBrunchTime() {
+		return brunchTime;
+	}
+	public void setBrunchTime(String brunchTime) {
+		this.brunchTime = brunchTime;
+	}
+	public String getDinnerTime() {
+		return dinnerTime;
+	}
+	public void setDinnerTime(String dinnerTime) {
+		this.dinnerTime = dinnerTime;
+	}	
 }

@@ -19,7 +19,7 @@ public class AddressDAO {
 		
 		try {
 			dbConn = DBConnection.getConnection();
-			String query = "INSERT into addresses(line1, line2, line3, line4, line5, ,line6, line7, line8, line9, line10, locality, latitude, longitude, town, city, state_province, pincode, country, tag, created_by, last_updated_by) values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			String query = "INSERT into addresses(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, locality, latitude, longitude, town, city, state_province, pincode, country, tag, created_by, last_updated_by) values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 			preparedStmt = dbConn.prepareStatement(query);
 			preparedStmt.setString(1, address.getLine1());
 			preparedStmt.setString(2, address.getLine2() == null ? "" : address.getLine2() );
@@ -64,7 +64,7 @@ public class AddressDAO {
 	        if (preparedStmt  != null) try { preparedStmt  .close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
-		address = getAddress(address.getAddressId());
+//		address = getAddress(address.getAddressId());
 		return address;
 	}
 	

@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.forage.bean.LookupTypeBean;
+import com.forage.bean.LookupValueBean;
 
 public class LookupJSON {
 
@@ -26,6 +27,33 @@ public class LookupJSON {
 		String jsonString = null;
 		try {
 			jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lookupType);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jsonString;
+	}
+	
+	
+	/**
+	 * Method to construct JSON string for CustomerBean
+	 * 
+	 * @param menu
+	 * @return
+	 * @throws IOException 
+	 */
+	public static String construct(LookupValueBean lookupValue) {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = null;
+		try {
+			jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lookupValue);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

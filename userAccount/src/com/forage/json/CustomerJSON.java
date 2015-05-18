@@ -223,7 +223,6 @@ public class CustomerJSON {
 			System.out.println("status : " + obj.getString("status"));
 			System.out.println("customer : " + obj.getString("customer"));
 			
-			HashMap<String, CustomerBean> map = new HashMap<String, CustomerBean>();
 			JSONObject jObject = new JSONObject(obj.getString("customer"));
 			
 		    ObjectMapper mapper = new ObjectMapper();

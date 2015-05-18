@@ -13,7 +13,9 @@ import java.util.List;
 
 import com.forage.bean.VendorBean;
 import com.forage.exception.AlreadyExistException;
+import com.forage.exception.BadRequestException;
 import com.forage.user.DBConnection;
+import com.forage.user.Utility;
 
 public class VendorDAO {
 
@@ -63,7 +65,7 @@ public class VendorDAO {
 	}
 
 	public VendorBean getVendor(String phoneNumber) {
-		VendorBean vendor = new VendorBean();
+		VendorBean vendor = null;
 		Connection dbConn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -74,10 +76,14 @@ public class VendorDAO {
 					+ phoneNumber + "'";
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
+				vendor = new VendorBean();
 				vendor.setVendorId(rs.getBigDecimal("vendor_id"));
 				vendor.setParentVendorId(rs.getBigDecimal("parent_vendor_id"));
 				vendor.setName(rs.getString("name"));
+				vendor.setContactPerson(rs.getString("contact_person"));
 				vendor.setPhoneNumber(rs.getString("phone_number"));
+				vendor.setPhoneNumber2(rs.getString("phone_number2"));
+				vendor.setPhoneNumber3(rs.getString("phone_number3"));
 				vendor.setLastGPSLatitude(rs.getDouble("last_gps_latitude"));
 				vendor.setLastGPSLongitude(rs.getDouble("last_gps_longitude"));
 				vendor.setPassword(rs.getString("password"));
@@ -102,6 +108,11 @@ public class VendorDAO {
 				vendor.setMinPriceMeal(rs.getBigDecimal("min_price_meal"));
 				vendor.setMaxPriceMeal(rs.getBigDecimal("max_price_meal"));
 
+				vendor.setBreakfastTime(rs.getString("breakfast_time"));
+				vendor.setBrunchTime(rs.getString("brunch_time"));
+				vendor.setLunchTime(rs.getString("lunch_time"));
+				vendor.setDinnerTime(rs.getString("dinner_time"));
+				
 				vendor.setCreatedBy(rs.getBigDecimal("created_by"));
 				vendor.setCreatedDate(rs.getDate("creation_date"));
 				vendor.setLastUpdatedBy(rs.getBigDecimal("last_updated_by"));
@@ -133,23 +144,25 @@ public class VendorDAO {
 				}
 		}
 
-		// Address DAO starts
-		AddressDAO addrDAO = new AddressDAO();
-		if (vendor.getAddress1() != null) {
-			vendor.setAddrBean1(addrDAO.getAddress(vendor.getAddress1()));
-		}
-		if (vendor.getAddress2() != null) {
-			vendor.setAddrBean2(addrDAO.getAddress(vendor.getAddress2()));
-		}
-		if (vendor.getAddress3() != null) {
-			vendor.setAddrBean3(addrDAO.getAddress(vendor.getAddress3()));
-		}
-		// Address DAO Ends
+		if(vendor != null) {
+			// Address DAO starts
+			AddressDAO addrDAO = new AddressDAO();
+			if (vendor.getAddress1() != null) {
+				vendor.setAddrBean1(addrDAO.getAddress(vendor.getAddress1()));
+			}
+			if (vendor.getAddress2() != null) {
+				vendor.setAddrBean2(addrDAO.getAddress(vendor.getAddress2()));
+			}
+			if (vendor.getAddress3() != null) {
+				vendor.setAddrBean3(addrDAO.getAddress(vendor.getAddress3()));
+			}
+			// Address DAO Ends
 
-		// menulist starts
-		MenuDAO menuDAO = new MenuDAO();
-		vendor.setMenuList(menuDAO.getVendorMenus(vendor.getVendorId()));
-		// menulist ends
+			// menulist starts
+			MenuDAO menuDAO = new MenuDAO();
+			vendor.setMenuList(menuDAO.getVendorMenus(vendor.getVendorId()));
+			// menulist ends
+		}
 
 		return vendor;
 	}
@@ -747,38 +760,45 @@ public class VendorDAO {
 		PreparedStatement preparedStmt = null;
 		try {
 			dbConn = DBConnection.getConnection();
-			String updateQuery = "update vendors set parent_vendor_id = ?, name = ?, phone_number = ?, last_gps_latitude = ?, last_gps_longitude = ?, " + 
+			String updateQuery = "update vendors set parent_vendor_id = ?, name = ?, contact_person = ?, phone_number = ?, phone_number2 = ?, phone_number3 = ?, last_gps_latitude = ?, last_gps_longitude = ?, " + 
 			"password = ?, email = ?, facebook_unique_id = ?, twitter_unique_id = ?, google_unique_id = ?, address1 = ?, address2 = ?, address3 = ?, " +
 			"profile_image_id = ?, active_flag = ?, approve_flag = ?, status = ?, menu_type = ?, cuisine = ?, cuisine2 = ?, cuisine3 = ?, cuisine4 = ?, " + 
-			"min_price_meal = ?, max_price_meal = ? where vendor_id = ?";
+			"min_price_meal = ?, max_price_meal = ?, breakfast_time = ?, brunch_time = ?, lunch_time = ?, dinner_time = ? where vendor_id = ?";
 			
 			preparedStmt = dbConn.prepareStatement(updateQuery);
 			
 			preparedStmt.setBigDecimal(1, vendor.getParentVendorId());
 			preparedStmt.setString(2, vendor.getName());
-			preparedStmt.setString(3, vendor.getPhoneNumber());
-			preparedStmt.setDouble(4, vendor.getLastGPSLatitude());
-			preparedStmt.setDouble(5, vendor.getLastGPSLongitude());
-			preparedStmt.setString(6, vendor.getPassword());			
-			preparedStmt.setString(7, vendor.getEmail());
-			preparedStmt.setString(8, vendor.getFacebookUniqueId());
-			preparedStmt.setString(9, vendor.getTwitterUniqueId());
-			preparedStmt.setString(10, vendor.getGoogleUniqueId());
-			preparedStmt.setBigDecimal(11, vendor.getAddress1());
-			preparedStmt.setBigDecimal(12, vendor.getAddress2());
-			preparedStmt.setBigDecimal(13, vendor.getAddress3());
-			preparedStmt.setBigDecimal(14, vendor.getProfileImageId());
-			preparedStmt.setString(15, vendor.getActiveFlag());
-			preparedStmt.setString(16, vendor.getApproveFlag());
-			preparedStmt.setString(17, vendor.getStatus());
-			preparedStmt.setString(18, vendor.getMenuType());
-			preparedStmt.setString(19, vendor.getCuisine());
-			preparedStmt.setString(20, vendor.getCuisine2());
-			preparedStmt.setString(21, vendor.getCuisine3());
-			preparedStmt.setString(22, vendor.getCuisine4());			
-			preparedStmt.setBigDecimal(23, vendor.getMinPriceMeal());
-			preparedStmt.setBigDecimal(24, vendor.getMaxPriceMeal());			
-			preparedStmt.setBigDecimal(25, vendor.getVendorId());			
+			preparedStmt.setString(3, vendor.getContactPerson());
+			preparedStmt.setString(4, vendor.getPhoneNumber());
+			preparedStmt.setString(5, vendor.getPhoneNumber2());
+			preparedStmt.setString(6, vendor.getPhoneNumber3());
+			preparedStmt.setDouble(7, vendor.getLastGPSLatitude());
+			preparedStmt.setDouble(8, vendor.getLastGPSLongitude());
+			preparedStmt.setString(9, vendor.getPassword());			
+			preparedStmt.setString(10, vendor.getEmail());
+			preparedStmt.setString(11, vendor.getFacebookUniqueId());
+			preparedStmt.setString(12, vendor.getTwitterUniqueId());
+			preparedStmt.setString(13, vendor.getGoogleUniqueId());
+			preparedStmt.setBigDecimal(14, vendor.getAddress1());
+			preparedStmt.setBigDecimal(15, vendor.getAddress2());
+			preparedStmt.setBigDecimal(16, vendor.getAddress3());
+			preparedStmt.setBigDecimal(17, vendor.getProfileImageId());
+			preparedStmt.setString(18, vendor.getActiveFlag());
+			preparedStmt.setString(19, vendor.getApproveFlag());
+			preparedStmt.setString(20, vendor.getStatus());
+			preparedStmt.setString(21, vendor.getMenuType());
+			preparedStmt.setString(22, vendor.getCuisine());
+			preparedStmt.setString(23, vendor.getCuisine2());
+			preparedStmt.setString(24, vendor.getCuisine3());
+			preparedStmt.setString(25, vendor.getCuisine4());			
+			preparedStmt.setBigDecimal(26, vendor.getMinPriceMeal());
+			preparedStmt.setBigDecimal(27, vendor.getMaxPriceMeal());
+			preparedStmt.setString(28, vendor.getBreakfastTime());
+			preparedStmt.setString(29, vendor.getBrunchTime());
+			preparedStmt.setString(30, vendor.getLunchTime());
+			preparedStmt.setString(31, vendor.getDinnerTime());
+			preparedStmt.setBigDecimal(32, vendor.getVendorId());			
 			preparedStmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -803,8 +823,17 @@ public class VendorDAO {
 	
 	
 	public void insert(VendorBean vendor) {
-		boolean insertStatus = false;
 		
+		VendorBean vendorCheck = new VendorBean();
+		vendorCheck = this.getVendor(vendor.getPhoneNumber());
+		if(vendorCheck != null){
+			vendor.setParentVendorId(vendorCheck.getVendorId());
+			vendor.setPhoneNumber3(vendor.getPhoneNumber2());
+			vendor.setPhoneNumber2(vendor.getPhoneNumber());
+			vendor.setPhoneNumber(vendor.getPhoneNumber() + "_" + Utility.getDateFormatted());
+		}
+		
+		boolean insertStatus = false;
 		Connection dbConn = null;
 		PreparedStatement preparedStmt = null;
 		try {
@@ -817,10 +846,12 @@ public class VendorDAO {
 			preparedStmt = dbConn.prepareStatement(insertQuery);
 			
 			preparedStmt.setBigDecimal(1, vendor.getParentVendorId());
-			preparedStmt.setString(2, vendor.getName());
+			if(vendor.getName() == null) throw new BadRequestException("VendorDAO.insert", "Vendor name not provided");
+			preparedStmt.setString(2, vendor.getName() );
+			if(vendor.getPhoneNumber() == null) throw new BadRequestException("VendorDAO.insert", "Vendor phone not provided");
 			preparedStmt.setString(3, vendor.getPhoneNumber());
-			preparedStmt.setDouble(4, vendor.getLastGPSLatitude());
-			preparedStmt.setDouble(5, vendor.getLastGPSLongitude());
+			preparedStmt.setDouble(4, (vendor.getLastGPSLatitude() == null ? 0 : vendor.getLastGPSLatitude()) );
+			preparedStmt.setDouble(5, (vendor.getLastGPSLongitude() == null ? 0 : vendor.getLastGPSLongitude()) );
 			preparedStmt.setString(6, vendor.getPassword());			
 			preparedStmt.setString(7, vendor.getEmail());
 			preparedStmt.setString(8, vendor.getFacebookUniqueId());
@@ -830,16 +861,16 @@ public class VendorDAO {
 			preparedStmt.setBigDecimal(12, vendor.getAddress2());
 			preparedStmt.setBigDecimal(13, vendor.getAddress3());
 			preparedStmt.setBigDecimal(14, vendor.getProfileImageId());
-			preparedStmt.setString(15, vendor.getActiveFlag());
-			preparedStmt.setString(16, vendor.getApproveFlag());
-			preparedStmt.setString(17, vendor.getStatus());
-			preparedStmt.setString(18, vendor.getMenuType());
-			preparedStmt.setString(19, vendor.getCuisine());
+			preparedStmt.setString(15, (vendor.getActiveFlag()==null ? "Y" : vendor.getActiveFlag() ));
+			preparedStmt.setString(16, (vendor.getApproveFlag()==null ? "Y" : vendor.getApproveFlag() ));
+			preparedStmt.setString(17, (vendor.getStatus()==null ? "NEW" : vendor.getStatus()));
+			preparedStmt.setString(18, (vendor.getMenuType()==null ? "VEG" : vendor.getMenuType()));
+			preparedStmt.setString(19, (vendor.getCuisine()==null ? "INDIAN" : vendor.getCuisine()));
 			preparedStmt.setString(20, vendor.getCuisine2());
 			preparedStmt.setString(21, vendor.getCuisine3());
 			preparedStmt.setString(22, vendor.getCuisine4());			
-			preparedStmt.setBigDecimal(23, vendor.getMinPriceMeal());
-			preparedStmt.setBigDecimal(24, vendor.getMaxPriceMeal());			
+			preparedStmt.setBigDecimal(23, (vendor.getMinPriceMeal() == null ? BigDecimal.ZERO : vendor.getMinPriceMeal() ));
+			preparedStmt.setBigDecimal(24, (vendor.getMaxPriceMeal() == null ? BigDecimal.ZERO : vendor.getMaxPriceMeal() ));			
 			preparedStmt.setBigDecimal(25, BigDecimal.ONE);
 			preparedStmt.setBigDecimal(26, BigDecimal.ONE);		
 
@@ -865,6 +896,7 @@ public class VendorDAO {
 		}
 		if (insertStatus) {
 			vendor = getVendor(vendor.getPhoneNumber());
+			System.out.println("vendor id created: " + vendor.getVendorId());
 		}
 	}
 

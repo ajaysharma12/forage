@@ -28,7 +28,7 @@ public class LookupValueDAO {
 			dbConn = DBConnection.getConnection();
 			stmt = dbConn.createStatement();
 			String query = "";
-			if("".equals(tag)){
+			if(tag == null || "".equals(tag)){
 				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "'";	
 			}else{
 				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and tag = '" + tag + "'";
@@ -210,14 +210,14 @@ public class LookupValueDAO {
 		return lookupValueBean;
 	}
 	
-	public LookupValueBean updateLookup(LookupValueBean lookupValueBean, BigDecimal updatedBy){
+	public LookupValueBean updateLookup(LookupValueBean lookupValueBean){
 		Connection dbConn  = null;
 		PreparedStatement preparedStmt  = null;
 		
 		try {
 			dbConn = DBConnection.getConnection();
 			String query = "update lookup_values set meaning = ?, description = ?, tag = ?, attribute1 = ?, attribute2 = ?, attribute3 = ?, attribute4 = ?, attribute5 = ?, start_Date_active = ?, end_date_active = ?, " +
-			"approve_flag = ?, enabled_flag = ?, last_updated_by = ?, last_update_login = ? where where lookup_type = ? and language = ? and lookup_code = ?";
+			"approve_flag = ?, enabled_flag = ?, last_updated_by = ?, last_update_login = ? where lookup_type = ? and language = ? and lookup_code = ?";
 			
 			preparedStmt = dbConn.prepareStatement(query);
 			
@@ -242,6 +242,9 @@ public class LookupValueDAO {
 			preparedStmt.setString(15, lookupValueBean.getLookupType());
 			preparedStmt.setString(16, lookupValueBean.getLanguage());
 			preparedStmt.setString(17, lookupValueBean.getLookupCode());
+			
+			preparedStmt.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -250,7 +253,6 @@ public class LookupValueDAO {
 	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
-		updateLastModified(lookupValueBean, updatedBy);
 
 		return lookupValueBean;
 	}

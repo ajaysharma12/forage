@@ -2,6 +2,8 @@ package com.forage.action;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,15 +21,53 @@ import com.forage.json.LookupJSON;
 @Path("/lookup")
 public class LookupAction {
 
-	@GET	
-	@Path("{type}/{tag}")  
-	@Produces(MediaType.APPLICATION_JSON) 
-	public String getLookupTypeTag( @PathParam("type") String lookupType,
+	public String tagLookupCode (@PathParam("type") String lookupType,
+								@PathParam("code") String lookupCode,
 								@PathParam("tag") String tag){
+		LookupValueDAO lookupValueDAO = new LookupValueDAO();
+		LookupValueBean lookupValueBean = lookupValueDAO.getLookupValue(lookupType, lookupCode);
+		lookupValueBean.setTag(tag);
+		lookupValueDAO.updateLookup(lookupValueBean);
+		return LookupJSON.construct(lookupValueBean);
+	}
+	
+	
+	public String updateLocalityZone(@PathParam("type") String lookupType,
+										@PathParam("code") String lookupCode,
+										@PathParam("zone") String zone){
+		LookupValueDAO lookupValueDAO = new LookupValueDAO();
+		LookupValueBean lookupValueBean = lookupValueDAO.getLookupValue(lookupType, lookupCode);
+		lookupValueBean.setAttribute1(zone);
+		lookupValueDAO.updateLookup(lookupValueBean);
+		return LookupJSON.construct(lookupValueBean);
+	}
+	
+	
+	@GET	
+	@Path("{type}/{tag}/{meaning}")  
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getLookupCode( @PathParam("type") String lookupType,
+									@PathParam("tag") String tag,					
+									@PathParam("meaning") String meaning){
+		LookupValueBean rtnLookupValue = null;
+		String rtnLookupCode = null;
 		LookupTypeDAO lookupTypeDAO = new LookupTypeDAO();
 		LookupTypeBean lookupTypeBean = null;
 		lookupTypeBean = lookupTypeDAO.getLookupType(lookupType, tag);	
-		return LookupJSON.construct(lookupTypeBean);
+		
+		List<LookupValueBean> typeList = lookupTypeBean.getLookupValues();
+		System.out.println(lookupType + " has #" + typeList.size() + " rows.");
+		Iterator<LookupValueBean> itr = typeList.iterator();
+		while(itr.hasNext()){
+			rtnLookupValue = itr.next();
+			if(meaning.toUpperCase().equals(rtnLookupValue.getMeaning().toUpperCase())){
+				rtnLookupCode = rtnLookupValue.getLookupCode();
+				break;
+			}else{
+				rtnLookupValue = null;
+			}
+		}
+		return rtnLookupCode;
 	}
 	
 	@GET	
@@ -72,13 +112,11 @@ public class LookupAction {
 		
 		lookupValueBean.setCreatedBy(userId);
 		lookupValueBean.setLastUpdatedBy(userId);
-		lookupValueBean.setLastUpdateLogin(userId);
-		
+		lookupValueBean.setLastUpdateLogin(userId);		
 		lookupValueBean = lookupValueDAO.insertLookup(lookupValueBean, userId);
 
-		LookupTypeDAO lookupTypeDAO = new LookupTypeDAO();
-		LookupTypeBean lookupTypeBean = lookupTypeDAO.getLookupType(lookupType, "");
-		return LookupJSON.construct(lookupTypeBean);
+		return LookupJSON.construct(lookupValueBean);
 	}
+	
 	
 }
