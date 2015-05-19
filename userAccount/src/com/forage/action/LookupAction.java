@@ -49,23 +49,14 @@ public class LookupAction {
 	public String getLookupCode( @PathParam("type") String lookupType,
 									@PathParam("tag") String tag,					
 									@PathParam("meaning") String meaning){
+		
 		LookupValueBean rtnLookupValue = null;
 		String rtnLookupCode = null;
-		LookupTypeDAO lookupTypeDAO = new LookupTypeDAO();
-		LookupTypeBean lookupTypeBean = null;
-		lookupTypeBean = lookupTypeDAO.getLookupType(lookupType, tag);	
+		LookupValueDAO lookupValueDAO = new LookupValueDAO();
+		rtnLookupValue = lookupValueDAO.getLookupValueOnMeaningTag(lookupType, meaning, tag);
 		
-		List<LookupValueBean> typeList = lookupTypeBean.getLookupValues();
-		System.out.println(lookupType + " has #" + typeList.size() + " rows.");
-		Iterator<LookupValueBean> itr = typeList.iterator();
-		while(itr.hasNext()){
-			rtnLookupValue = itr.next();
-			if(meaning.toUpperCase().equals(rtnLookupValue.getMeaning().toUpperCase())){
-				rtnLookupCode = rtnLookupValue.getLookupCode();
-				break;
-			}else{
-				rtnLookupValue = null;
-			}
+		if (rtnLookupValue!=null && meaning.toUpperCase().equals(rtnLookupValue.getMeaning().toUpperCase())) {
+			rtnLookupCode = rtnLookupValue.getLookupCode();
 		}
 		return rtnLookupCode;
 	}

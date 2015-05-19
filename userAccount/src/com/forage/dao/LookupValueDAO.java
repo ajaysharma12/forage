@@ -16,6 +16,67 @@ import com.forage.user.DBConnection;
 
 public class LookupValueDAO {
 	
+	
+	public LookupValueBean getLookupValueOnMeaningTag(String lookupType, String meaning, String tag){
+		LookupValueBean lookupValueBean = null;
+		Connection dbConn  = null;
+		Statement stmt  = null;
+		ResultSet rs  = null;
+		
+		try {
+			dbConn = DBConnection.getConnection();
+			stmt = dbConn.createStatement();
+			String query = null;
+			if(tag == null || "".equals(tag)){
+				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and language = 'US'";	
+			}else{
+				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and tag = '"+ tag + "' and language = 'US'";
+			}
+			
+			rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				lookupValueBean = new LookupValueBean();
+				lookupValueBean.setLookupType(rs.getString("lookup_type"));
+				lookupValueBean.setLanguage(rs.getString("language"));
+				lookupValueBean.setLookupCode(rs.getString("lookup_code"));
+				lookupValueBean.setMeaning(rs.getString("meaning"));
+				lookupValueBean.setDescription(rs.getString("description"));
+				lookupValueBean.setTag(rs.getString("tag"));
+				
+				lookupValueBean.setAttribute1(rs.getString("attribute1"));
+				lookupValueBean.setAttribute2(rs.getString("attribute2"));
+				lookupValueBean.setAttribute3(rs.getString("attribute3"));
+				lookupValueBean.setAttribute4(rs.getString("attribute4"));
+				lookupValueBean.setAttribute5(rs.getString("attribute5"));
+				
+				lookupValueBean.setStartActiveDate(rs.getDate("start_Date_active"));
+				lookupValueBean.setEndActiveDate(rs.getDate("end_date_active") == null ? null : rs.getDate("end_date_active"));
+				
+				lookupValueBean.setApproveFlag(rs.getString("approve_flag"));
+				lookupValueBean.setEnabledFlag(rs.getString("enabled_flag"));
+				
+				lookupValueBean.setCreatedBy(rs.getBigDecimal("created_by"));
+				lookupValueBean.setCreatedDate(rs.getDate("creation_date"));
+				lookupValueBean.setLastUpdatedBy(rs.getBigDecimal("last_updated_by"));
+				lookupValueBean.setLastUpdateDate(rs.getDate("last_update_date"));
+				lookupValueBean.setLastUpdateLogin(rs.getBigDecimal("last_update_login"));
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+	        if (stmt  != null) try { stmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+
+		return lookupValueBean;
+	}
+	
+	
+	
 	public List<LookupValueBean> getLookupValues(String lookupType, String tag){
 		List<LookupValueBean> lookupValueList = new ArrayList<LookupValueBean>();
 		List<String> lookupCodes = new ArrayList<String>();

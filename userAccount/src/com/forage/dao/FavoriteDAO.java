@@ -176,6 +176,7 @@ public class FavoriteDAO {
 		FavoriteBean favoriteBean = new FavoriteBean();
 		java.util.Date currentDate = new java.util.Date();
 		
+		BigDecimal favoriteKey = BigDecimal.ZERO;
 		Connection dbConn  = null;
 		PreparedStatement preparedStmt  = null;
 		ResultSet rs  = null;
@@ -194,12 +195,9 @@ public class FavoriteDAO {
 			preparedStmt.execute();
 			rs = preparedStmt.getGeneratedKeys();
 			
-			BigDecimal favoriteKey = BigDecimal.ZERO;
 			if (rs != null && rs.next()) {
 				favoriteKey = rs.getBigDecimal(1);
 			}
-			
-			favoriteBean = this.getFavorite(favoriteKey);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -212,7 +210,8 @@ public class FavoriteDAO {
 	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
-
+		
+		favoriteBean = this.getFavorite(favoriteKey);
 		return favoriteBean;
 	}
 	

@@ -822,18 +822,10 @@ public class VendorDAO {
 	
 	
 	
-	public void insert(VendorBean vendor) {
+	public VendorBean insert(VendorBean vendor) {
 		
-		VendorBean vendorCheck = new VendorBean();
-		vendorCheck = this.getVendor(vendor.getPhoneNumber());
-		if(vendorCheck != null){
-			vendor.setParentVendorId(vendorCheck.getVendorId());
-			vendor.setPhoneNumber3(vendor.getPhoneNumber2());
-			vendor.setPhoneNumber2(vendor.getPhoneNumber());
-			vendor.setPhoneNumber(vendor.getPhoneNumber() + "_" + Utility.getDateFormatted());
-		}
-		
-		boolean insertStatus = false;
+		BigDecimal vendorKey = BigDecimal.ZERO;
+		ResultSet rs  = null;
 		Connection dbConn = null;
 		PreparedStatement preparedStmt = null;
 		try {
@@ -874,7 +866,13 @@ public class VendorDAO {
 			preparedStmt.setBigDecimal(25, BigDecimal.ONE);
 			preparedStmt.setBigDecimal(26, BigDecimal.ONE);		
 
-			insertStatus = preparedStmt.execute();
+			preparedStmt.execute();
+			
+			rs = preparedStmt.getGeneratedKeys();
+			
+			if (rs != null && rs.next()) {
+				vendorKey = rs.getBigDecimal(1);
+			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -883,6 +881,7 @@ public class VendorDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
 			if (preparedStmt != null)
 				try {
 					preparedStmt.close();
@@ -894,10 +893,7 @@ public class VendorDAO {
 				} catch (SQLException ignore) {
 				}
 		}
-		if (insertStatus) {
-			vendor = getVendor(vendor.getPhoneNumber());
-			System.out.println("vendor id created: " + vendor.getVendorId());
-		}
+		vendor = this.getVendor(vendorKey);
+		return vendor;
 	}
-
 }
