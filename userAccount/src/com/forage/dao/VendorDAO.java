@@ -15,7 +15,6 @@ import com.forage.bean.VendorBean;
 import com.forage.exception.AlreadyExistException;
 import com.forage.exception.BadRequestException;
 import com.forage.user.DBConnection;
-import com.forage.user.Utility;
 
 public class VendorDAO {
 
@@ -73,7 +72,7 @@ public class VendorDAO {
 			dbConn = DBConnection.getConnection();
 			stmt = dbConn.createStatement();
 			String query = "SELECT * FROM vendors WHERE phone_number = '"
-					+ phoneNumber + "'";
+					+ phoneNumber + "' or phone_number2 = '" + phoneNumber + "' or phone_number3 = '" + phoneNumber + "'";
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				vendor = new VendorBean();
@@ -178,45 +177,11 @@ public class VendorDAO {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public void insertNewVendorNameNumber(VendorBean vendor) {
-
-		boolean insertStatus = false;
-
-		Connection dbConn = null;
-		PreparedStatement preparedStmt = null;
-
-		try {
-			dbConn = DBConnection.getConnection();
-			VendorBean vendorCheck = getVendor(vendor.getPhoneNumber());
-			if (!vendorCheck.getCreatedBy().equals(BigDecimal.ONE)
-					|| vendorCheck.getVendorId() == null) {
-				String query = "INSERT into vendors(name, phone_number, created_by, last_updated_by) values( ?, ?, ?, ?)";
-				preparedStmt = dbConn.prepareStatement(query);
-				preparedStmt.setString(1, vendor.getName());
-				preparedStmt.setString(2, vendor.getPhoneNumber());
-				preparedStmt.setBigDecimal(3, BigDecimal.ONE);
-				preparedStmt.setBigDecimal(4, BigDecimal.ONE);
-				insertStatus = preparedStmt.execute();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (preparedStmt != null)
-				try {
-					preparedStmt.close();
-				} catch (SQLException ignore) {
-				}
-			if (dbConn != null)
-				try {
-					dbConn.close();
-				} catch (SQLException ignore) {
-				}
-		}
-		if (insertStatus) {
-			vendor = getVendor(vendor.getPhoneNumber());
-		}
+	public VendorBean insertNewVendorNameNumber(VendorBean vendor) {
+		vendor.setCreatedBy(BigDecimal.ONE);
+		vendor.setLastUpdatedBy(BigDecimal.ONE);
+		vendor = this.insert(vendor);
+		return vendor; 
 	}
 
 	public void approveVendor(BigDecimal vendorId, boolean approve) {
@@ -821,8 +786,44 @@ public class VendorDAO {
 	}
 	
 	
+	public String getNextAutoIncreamentVendor(){
+		String autoIncrement = null;
+		Connection dbConn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			dbConn = DBConnection.getConnection();
+			stmt = dbConn.createStatement();
+			String query = "SHOW TABLE STATUS FROM forage LIKE 'vendors'";
+			rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				autoIncrement = rs.getString("Auto_increment");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException ignore) { }
+			if (stmt != null) try { stmt.close(); } catch (SQLException ignore) { }
+			if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) { }
+		}
+		return autoIncrement;
+	}
+	
+	
 	
 	public VendorBean insert(VendorBean vendor) {
+		
+		VendorBean vendorCheck = null;
+		vendorCheck = this.getVendor(vendor.getPhoneNumber());
+		if(vendorCheck != null){
+			vendor.setPhoneNumber3(vendor.getPhoneNumber2());
+			vendor.setPhoneNumber2(vendor.getPhoneNumber());
+			vendor.setPhoneNumber(this.getNextAutoIncreamentVendor());
+		}
 		
 		BigDecimal vendorKey = BigDecimal.ZERO;
 		ResultSet rs  = null;

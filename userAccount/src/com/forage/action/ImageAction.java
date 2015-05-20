@@ -6,8 +6,10 @@ import java.math.BigDecimal;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -22,9 +24,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.forage.bean.ImageBean;
 import com.forage.bean.MenuBean;
+import com.forage.bean.VendorBean;
 import com.forage.dao.ImageDAO;
 import com.forage.dao.MenuDAO;
+import com.forage.dao.VendorDAO;
+import com.forage.exception.BadRequestException;
+import com.forage.exception.NotFoundException;
 import com.forage.json.ImageJSON;
+import com.forage.json.VendorJSON;
 import com.forage.user.ImageUtility;
 import com.forage.user.Utility;
 import com.sun.jersey.api.client.Client;
@@ -53,6 +60,24 @@ public class ImageAction {
 			@FormDataParam ("category") String imageCategory
 			)
 	{
+		
+//		imageId
+//		parentImageId
+//		imageType			: is set (reset in ImageUtility.uploadFile)
+//		imageSize			: is set
+//		imageCategory		: is set
+//		imageName			: is set (reset in ImageUtility.uploadFile)
+//		imagePath			: is set in ImageUtility.uploadFile
+//		imageTag			: 
+//		menuId				: is set here
+//		customerId			: is set here
+//		vendorId			: is set here
+//		approveFlag			: is set here
+//		enabledFlag			: is set here
+//		createdBy			: is set here
+//		createdDate
+//		lastUpdatedBy		: is set here
+//		lastUpdateDate
 		
 		ImageBean imageBean = new ImageBean();
 		imageBean.setImageCategory(imageCategory);
@@ -85,12 +110,13 @@ public class ImageAction {
 			imageBean.setLastUpdatedBy(menu.getVendorId());
 			break;
 		default :
-			imageBean.setCustomerId(id);
-			break;
+			throw new BadRequestException("ImageAction.uploadImage", "No Image Category Mentioned");
 		}
 		imageBean.setImageType(Utility.getFileExtension(fileDetail.getName()));
 		imageBean.setImageName(Utility.getFileNameWithoutExtension(fileDetail.getName()));
 		imageBean.setImageSize(new BigDecimal(fileDetail.getSize()));
+		imageBean.setApproveFlag("N");
+		imageBean.setEnabledFlag("N");
 		imageBean.setCreatedDate(fileDetail.getCreationDate());
 		imageBean.setLastUpdateDate(fileDetail.getModificationDate());
 		
@@ -101,6 +127,18 @@ public class ImageAction {
 		
 		return ImageJSON.construct(imageBean);
 		
+	}
+	
+	@GET
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getImage(@PathParam("id") BigDecimal imageId){
+		ImageDAO imageDAO = new ImageDAO();
+		ImageBean image = imageDAO.getImage(imageId);
+		if(image.getImageId() == null){
+			throw new NotFoundException("ImageAction.getImage", "Image " + imageId +" not registered ");
+		}
+		return ImageJSON.constructStatus("ImageAction.getImage", "Success", image);
 	}
 	
 	

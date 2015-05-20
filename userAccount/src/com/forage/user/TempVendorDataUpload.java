@@ -138,10 +138,11 @@ public class TempVendorDataUpload {
 	}
 	
 	private void loadData(TempBean tempVend){
-		AddressBean addr = createAddress(tempVend);
+		
 		VendorBean vendor = initiateVendor(tempVend);
-		vendor.setAddress1(addr.getAddressId());
-		vendor.setAddrBean1(addr);
+//		AddressBean addr = createAddress(tempVend);
+//		vendor.setAddress1(addr.getAddressId());
+//		vendor.setAddrBean1(addr);
 		
 		VendorDAO vendorDAO = new VendorDAO();
 		

@@ -111,7 +111,7 @@ public class FavoriteJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("favorite", favorite);
+		jsonMap.put("message", favorite);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -138,7 +138,7 @@ public class FavoriteJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("favorite", favoriteMap);
+		jsonMap.put("message", favoriteMap);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -166,7 +166,7 @@ public class FavoriteJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("favorites", favoriteList);
+		jsonMap.put("message", favoriteList);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(

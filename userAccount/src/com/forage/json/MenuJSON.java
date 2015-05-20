@@ -110,7 +110,7 @@ public class MenuJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("menu", menu);
+		jsonMap.put("message", menu);
 		
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -135,7 +135,7 @@ public class MenuJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("menu", menuMap);
+		jsonMap.put("message", menuMap);
 		
         try {
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
@@ -160,7 +160,7 @@ public class MenuJSON {
         Map jsonMap = new LinkedHashMap();
         jsonMap.put("action", action);
         jsonMap.put("status", status);
-        jsonMap.put("menus", menuList);
+        jsonMap.put("message", menuList);
         
         try {        	
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	

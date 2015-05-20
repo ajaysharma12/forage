@@ -108,7 +108,7 @@ public class UserPreferenceJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("preference", preference);
+		jsonMap.put("message", preference);
 		
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -133,7 +133,7 @@ public class UserPreferenceJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("preferences", preferenceMap);
+		jsonMap.put("message", preferenceMap);
 		
         try {
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
@@ -158,7 +158,7 @@ public class UserPreferenceJSON {
         Map jsonMap = new LinkedHashMap();
         jsonMap.put("action", action);
         jsonMap.put("status", status);
-        jsonMap.put("preferences", preferenceList);
+        jsonMap.put("message", preferenceList);
         
         try {        	
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	

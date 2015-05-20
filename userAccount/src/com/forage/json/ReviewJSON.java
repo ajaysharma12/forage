@@ -109,7 +109,7 @@ public class ReviewJSON {
 			Map jsonMap = new LinkedHashMap();
 			jsonMap.put("action", action);
 			jsonMap.put("status", status);
-			jsonMap.put("review", review);
+			jsonMap.put("message", review);
 			
 			try {
 				json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -134,7 +134,7 @@ public class ReviewJSON {
 			Map jsonMap = new LinkedHashMap();
 			jsonMap.put("action", action);
 			jsonMap.put("status", status);
-			jsonMap.put("review", reviewMap);
+			jsonMap.put("message", reviewMap);
 			
 	        try {
 	        	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
@@ -161,7 +161,7 @@ public class ReviewJSON {
 	        Map jsonMap = new LinkedHashMap();
 	        jsonMap.put("action", action);
 	        jsonMap.put("status", status);
-	        jsonMap.put("reviews", reviewList);
+	        jsonMap.put("message", reviewList);
 	        
 	        try {        	
 	        	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	

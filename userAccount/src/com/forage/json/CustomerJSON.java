@@ -115,7 +115,7 @@ public class CustomerJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("customer", customer);
+		jsonMap.put("message", customer);
 		
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -140,7 +140,7 @@ public class CustomerJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("customer", customerMap);
+		jsonMap.put("message", customerMap);
 		
         try {
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
@@ -165,7 +165,7 @@ public class CustomerJSON {
         Map jsonMap = new LinkedHashMap();
         jsonMap.put("action", action);
         jsonMap.put("status", status);
-        jsonMap.put("customers", customerList);
+        jsonMap.put("message", customerList);
         
         try {        	
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	
@@ -189,10 +189,10 @@ public class CustomerJSON {
 			JSONObject obj = new JSONObject(jsonString);
 			System.out.println("action : " + obj.getString("action"));
 			System.out.println("status : " + obj.getString("status"));
-			System.out.println("customers : " + obj.getString("customers"));
+			System.out.println("message : " + obj.getString("message"));
 			
 			HashMap<String, CustomerBean> map = new HashMap<String, CustomerBean>();
-			JSONObject jObject = new JSONObject(obj.getString("customers"));
+			JSONObject jObject = new JSONObject(obj.getString("message"));
 			Iterator<?> keys = jObject.keys();
 			
 			while( keys.hasNext() ){
@@ -221,9 +221,9 @@ public class CustomerJSON {
 			JSONObject obj = new JSONObject(jsonString);
 			System.out.println("action : " + obj.getString("action"));
 			System.out.println("status : " + obj.getString("status"));
-			System.out.println("customer : " + obj.getString("customer"));
+			System.out.println("message : " + obj.getString("message"));
 			
-			JSONObject jObject = new JSONObject(obj.getString("customer"));
+			JSONObject jObject = new JSONObject(obj.getString("message"));
 			
 		    ObjectMapper mapper = new ObjectMapper();
 		    CustomerBean customer =  mapper.readValue(jObject.toString(), CustomerBean.class);

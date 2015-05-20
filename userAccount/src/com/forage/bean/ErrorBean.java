@@ -8,43 +8,43 @@ public class ErrorBean implements Serializable {
 	 */
 	private static final long serialVersionUID = 2224431549783764391L;
 
-	private String operation;
-	private int errorCode;
-	private String errorMsg;
+	private String action;
+	private int status;
+	private String message;
 	
 	
 	public ErrorBean() {
 
 	}
 
-	public ErrorBean(String operation, int errorCode, String errorMsg) {
-		this.errorCode = errorCode;
-		this.errorMsg = errorMsg;
-		this.operation = operation;
+	public ErrorBean(String action, int status, String message) {
+		this.action = action;
+		this.status = status;
+		this.message = message;
 	}
 
-	public String getErrorMsg() {
-		return errorMsg;
+	public String getAction() {
+		return action;
 	}
 
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
-	public int getErrorCode() {
-		return errorCode;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setErrorCode(int errorCode) {
-		this.errorCode = errorCode;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
-	public String getOperation() {
-		return operation;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setOperation(String operation) {
-		this.operation = operation;
+	public void setMessage(String message) {
+		this.message = message;
 	}
-
+	
 }

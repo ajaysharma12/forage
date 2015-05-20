@@ -73,8 +73,7 @@ public class ImageUtility {
 	final static float i400_quality = 0.70f;
 	final static float i800_quality = 0.60f;
 	
-	
-	
+		
 	public static boolean uploadFile(ImageBean imageBean, InputStream is){
 		ByteArrayOutputStream baos = null;
 		imageBean.setImageName(imageNameTimestamped(imageBean));

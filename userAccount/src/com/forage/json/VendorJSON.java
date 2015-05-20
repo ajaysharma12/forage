@@ -109,7 +109,7 @@ public class VendorJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("vendor", vendor);
+		jsonMap.put("message", vendor);
 		
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -134,7 +134,7 @@ public class VendorJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("vendors", vendorMap);
+		jsonMap.put("message", vendorMap);
 		
         try {
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
@@ -159,7 +159,7 @@ public class VendorJSON {
         Map jsonMap = new LinkedHashMap();
         jsonMap.put("action", action);
         jsonMap.put("status", status);
-        jsonMap.put("vendors", vendorList);
+        jsonMap.put("message", vendorList);
         
         try {        	
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	

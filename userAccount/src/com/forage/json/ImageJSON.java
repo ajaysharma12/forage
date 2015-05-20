@@ -112,7 +112,7 @@ public class ImageJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("image", image);
+		jsonMap.put("message", image);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -139,7 +139,7 @@ public class ImageJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("image", imageMap);
+		jsonMap.put("message", imageMap);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -167,7 +167,7 @@ public class ImageJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("images", imageList);
+		jsonMap.put("message", imageList);
 
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(

@@ -111,7 +111,7 @@ public class LookupJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("lookupType", lookupType);
+		jsonMap.put("message", lookupType);
 		
 		try {
 			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
@@ -136,7 +136,7 @@ public class LookupJSON {
         Map jsonMap = new LinkedHashMap();
         jsonMap.put("action", action);
         jsonMap.put("status", status);
-        jsonMap.put("lookupTypes", lookupTypeList);
+        jsonMap.put("message", lookupTypeList);
         
         try {        	
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);   	
@@ -162,7 +162,7 @@ public class LookupJSON {
 		Map jsonMap = new LinkedHashMap();
 		jsonMap.put("action", action);
 		jsonMap.put("status", status);
-		jsonMap.put("lookupType", lookupTypeMap);
+		jsonMap.put("message", lookupTypeMap);
 		
         try {
         	json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);        	
