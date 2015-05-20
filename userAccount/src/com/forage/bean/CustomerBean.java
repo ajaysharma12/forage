@@ -35,8 +35,13 @@ public class CustomerBean implements Serializable, Principal {
 	BigDecimal address3;
 	BigDecimal shippingAddress;
 	
+	BigDecimal profileImageId;
+	
 	String activeFlag;
 	String approveFlag;
+	
+	String summary;
+	
 	BigDecimal createdBy;
 	Date createdDate;
 	BigDecimal lastUpdatedBy;
@@ -231,5 +236,18 @@ public class CustomerBean implements Serializable, Principal {
 	public void setPreference(UserPreferenceBean preference) {
 		this.preference = preference;
 	}
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	public BigDecimal getProfileImageId() {
+		return profileImageId;
+	}
+	public void setProfileImageId(BigDecimal profileImageId) {
+		this.profileImageId = profileImageId;
+	}
+	
 	
 }

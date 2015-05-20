@@ -1,10 +1,16 @@
 package com.forage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class MenuBean {
-
+public class MenuBean implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7831501305776510044L;
+	
 	BigDecimal menuId;
 	BigDecimal vendorId;
 	String menuType;
@@ -15,6 +21,7 @@ public class MenuBean {
 	String dayOfWeek;
 	String menuTag;
 	String approveFlag;
+	String summary;
 	String enabledFlag;
 	String menuItem1;
 	String menuItem2;
@@ -36,6 +43,8 @@ public class MenuBean {
 	String menuItem18;
 	String menuItem19;
 	String menuItem20;
+	
+	String mealSize;
 	
 	BigDecimal profileImageId;
 	
@@ -260,5 +269,17 @@ public class MenuBean {
 	public void setProfileImageId(BigDecimal profileImageId) {
 		this.profileImageId = profileImageId;
 	}
-		
+	public String getMealSize() {
+		return mealSize;
+	}
+	public void setMealSize(String mealSize) {
+		this.mealSize = mealSize;
+	}
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
 }

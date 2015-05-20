@@ -13,6 +13,7 @@ import com.forage.bean.CustomerBean;
 import com.forage.bean.FavoriteBean;
 import com.forage.bean.UserPreferenceBean;
 import com.forage.exception.AlreadyExistException;
+import com.forage.exception.BadRequestException;
 import com.forage.exception.NotFoundException;
 import com.forage.user.DBConnection;
 
@@ -31,7 +32,6 @@ public class CustomerDAO {
 	 */
 	public void insertNewCustomerNameNumber(CustomerBean customer) {
 		
-		boolean insertStatus = false;
 		Connection dbConn  = null;
 		PreparedStatement preparedStmt  = null;
 
@@ -46,8 +46,7 @@ public class CustomerDAO {
 				preparedStmt.setString(3, customer.getPhoneNumber());
 				preparedStmt.setBigDecimal(4, BigDecimal.ONE);
 				preparedStmt.setBigDecimal(5, BigDecimal.ONE);
-				insertStatus = preparedStmt.execute();
-				
+				preparedStmt.execute();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -56,13 +55,9 @@ public class CustomerDAO {
 		}finally{
 	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
-		}
-		
-		if (insertStatus) {
-			customer = getCustomer(customer.getPhoneNumber());
-			customer.setPreference(createUserPreference(customer));
-		}
-
+		}		
+		customer = getCustomer(customer.getPhoneNumber());
+		customer.setPreference(createUserPreference(customer));
 	}
 	
 	private UserPreferenceBean createUserPreference(CustomerBean customer){
@@ -340,6 +335,33 @@ public class CustomerDAO {
 
 	}
 	
+	public boolean updateSummary(BigDecimal customerId, String summary) {
+		int updateStatus = 0;
+		Connection dbConn  = null;
+		PreparedStatement preparedStmt  = null;
+		
+		try {
+			dbConn = DBConnection.getConnection();
+			String updateQuery = "update customers set summary = ? where customer_id = ?";
+			preparedStmt = dbConn .prepareStatement(updateQuery);
+			preparedStmt.setString(1, summary);
+			preparedStmt.setBigDecimal(2, customerId);
+			updateStatus = preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+		
+		return updateStatus > 0 ? true : false;
+
+	}
+	
 	
 	public void updateShippingAddress(CustomerBean customer) {
 		Connection dbConn  = null;
@@ -547,8 +569,68 @@ public class CustomerDAO {
 	}
 	
 	
-	
-	
+	public CustomerBean insert(CustomerBean customer) {
+		
+		BigDecimal customerKey = BigDecimal.ZERO;
+		ResultSet rs  = null;
+		Connection dbConn = null;
+		PreparedStatement preparedStmt = null;
+		try {
+			dbConn = DBConnection.getConnection();
+			String insertQuery = "INSERT into customers(first_name, last_name, gender , phone_number, last_gps_latitude, last_gps_longitude , password , " + 
+			"email , facebook_unique_id, twitter_unique_id, google_unique_id  , address, address2, address3, shipping_address, profile_image_id, summary, active_flag, approve_flag, " + 
+			"created_by , last_updated_by) " + 
+			"values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			
+			preparedStmt = dbConn.prepareStatement(insertQuery);
+			
+			if(customer.getFirstName() == null) throw new BadRequestException("CustomerDAO.insert", "Customer name not provided");
+				preparedStmt.setString(1, customer.getFirstName());
+			preparedStmt.setString(2, customer.getLastName());
+			preparedStmt.setString(3, customer.getGender());
+			if(customer.getPhoneNumber() == null) throw new BadRequestException("CustomerDAO.insert", "Customer phone not provided");
+				preparedStmt.setString(4, customer.getPhoneNumber());
+			preparedStmt.setDouble(5, (customer.getLastGPSLatitude() == null ? 0 : customer.getLastGPSLatitude()));
+			preparedStmt.setDouble(6, (customer.getLastGPSLongitude() == null ? 0 : customer.getLastGPSLongitude()));
+			preparedStmt.setString(7, customer.getPassword());
+			preparedStmt.setString(8, customer.getEmail());
+			preparedStmt.setString(9, customer.getFacebookUniqueId());
+			preparedStmt.setString(10, customer.getTwitterUniqueId());
+			preparedStmt.setString(11, customer.getGoogleUniqueId());
+			preparedStmt.setBigDecimal(12, customer.getAddress());
+			preparedStmt.setBigDecimal(13, customer.getAddress2());
+			preparedStmt.setBigDecimal(14, customer.getAddress3());
+			preparedStmt.setBigDecimal(15, customer.getShippingAddress());
+			preparedStmt.setBigDecimal(16, customer.getProfileImageId());
+			preparedStmt.setString(17, customer.getSummary());
+			preparedStmt.setString(18, customer.getActiveFlag());
+			preparedStmt.setString(19, customer.getApproveFlag());
+			
+			preparedStmt.setBigDecimal(20, BigDecimal.ONE);
+			preparedStmt.setBigDecimal(21, BigDecimal.ONE);		
+			
+			preparedStmt.execute();
+			
+			rs = preparedStmt.getGeneratedKeys();
+			
+			if (rs != null && rs.next()) {
+				customerKey = rs.getBigDecimal(1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+			if (preparedStmt != null) try { preparedStmt.close(); } catch (SQLException ignore) { }
+			if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) { }
+		}
+		customer = this.getCustomer(customerKey);
+		return customer;
+	}
 	
 
 	public static void main(String args[]) {

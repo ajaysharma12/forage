@@ -253,8 +253,8 @@ public class MenuDAO {
 			dbConn = DBConnection.getConnection();
 
 			String query = "insert into menus (vendor_id, menu_type, cuisine, meal_of_the_day, delivery_time_range, price, day_of_week, menu_tag, approve_flag, enabled_flag, menu_item1, menu_item2, menu_item3, menu_item4, menu_item5, menu_item6, menu_item7, " +
-					"menu_item8, menu_item9, menu_item10, menu_item11, menu_item12, menu_item13, menu_item14, menu_item15, menu_item16, menu_item17, menu_item18, menu_item19, menu_item20, profile_image_id, created_by, creation_date, last_updated_by, last_update_date) values" + 
-					" ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" ;
+					"menu_item8, menu_item9, menu_item10, menu_item11, menu_item12, menu_item13, menu_item14, menu_item15, menu_item16, menu_item17, menu_item18, menu_item19, menu_item20, meal_size, profile_image_id, summary, created_by, creation_date, last_updated_by, last_update_date) values" + 
+					" ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" ;
 			
 			preparedStmt = dbConn.prepareStatement(query);
 			preparedStmt.setBigDecimal(1, menuBean.getVendorId());
@@ -289,12 +289,16 @@ public class MenuDAO {
 			preparedStmt.setString(29, menuBean.getMenuItem19());
 			preparedStmt.setString(30, menuBean.getMenuItem20());
 			
-			preparedStmt.setBigDecimal(31, menuBean.getProfileImageId());
+			preparedStmt.setString(31, menuBean.getMealSize());
 			
-			preparedStmt.setBigDecimal(32, menuBean.getCreatedBy());
-			preparedStmt.setDate(33, Utility.convertFromJAVADateToSQLDate(menuBean.getCreatedDate()) );
-			preparedStmt.setBigDecimal(34, menuBean.getLastUpdatedBy());
-			preparedStmt.setDate(35, Utility.convertFromJAVADateToSQLDate(menuBean.getLastUpdateDate()) );
+			preparedStmt.setBigDecimal(32, menuBean.getProfileImageId());
+			
+			preparedStmt.setString(33, menuBean.getSummary());
+			
+			preparedStmt.setBigDecimal(34, menuBean.getCreatedBy());
+			preparedStmt.setDate(35, Utility.convertFromJAVADateToSQLDate(menuBean.getCreatedDate()));
+			preparedStmt.setBigDecimal(36, menuBean.getLastUpdatedBy());
+			preparedStmt.setDate(37, Utility.convertFromJAVADateToSQLDate(menuBean.getLastUpdateDate()));
 			
 			preparedStmt.execute();
 			rs = preparedStmt.getGeneratedKeys();
@@ -329,7 +333,7 @@ public class MenuDAO {
 			String query = "update addresses set vendor_id = ?, menu_type = ?, cuisine = ?, meal_of_the_day = ?, delivery_time_range = ?, price = ?, day_of_week = ?, menu_tag = ?, approve_flag = ?, enabled_flag = ?, " +
 			"menu_item1 = ?, menu_item2 = ?, menu_item3 = ?, menu_item4 = ?, menu_item5 = ?, menu_item6 = ?, menu_item7 = ?, menu_item8 = ?, menu_item9 = ?, menu_item10 = ?, " +
 			"menu_item11 = ?, menu_item12 = ?, menu_item13 = ?, menu_item14 = ?, menu_item15 = ?, menu_item16 = ?, menu_item17 = ?, menu_item18 = ?, menu_item19 = ?, menu_item20 = ?, " + 
-			"profile_image_id = ?" +
+			"meal_size =  ?, profile_image_id = ?, summary = ?" +
 			" where menu_id = ?";
 			preparedStmt = dbConn.prepareStatement(query);
 		
@@ -364,7 +368,13 @@ public class MenuDAO {
 			preparedStmt.setString(28, menu.getMenuItem18());
 			preparedStmt.setString(29, menu.getMenuItem19());
 			preparedStmt.setString(30, menu.getMenuItem20());
-			preparedStmt.setBigDecimal(31, menu.getMenuId());			
+			
+			preparedStmt.setString(31, menu.getMealSize());
+			preparedStmt.setBigDecimal(32, menu.getProfileImageId());
+			
+			preparedStmt.setString(33, menu.getSummary());
+			
+			preparedStmt.setBigDecimal(34, menu.getMenuId());			
 			preparedStmt.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -377,6 +387,30 @@ public class MenuDAO {
 		}
 
 		return menu;
+	}
+	
+	public boolean updateMenuSummary(BigDecimal menuId, String summary){
+		int updateStatus = 0;
+		Connection dbConn  = null;
+		PreparedStatement preparedStmt  = null;
+
+		try {
+			dbConn = DBConnection.getConnection();
+			String query = "update menus set summary = ? where menu_id = ?";
+			preparedStmt = dbConn.prepareStatement(query);
+			preparedStmt.setString(1, summary);
+			preparedStmt.setBigDecimal(2, menuId);
+			updateStatus = preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+		return updateStatus > 0 ? true : false;
+
 	}
 	
 }

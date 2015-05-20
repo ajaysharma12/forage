@@ -3,35 +3,24 @@ package com.forage.action;
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import com.forage.bean.ImageBean;
 import com.forage.bean.MenuBean;
-import com.forage.bean.VendorBean;
 import com.forage.dao.ImageDAO;
 import com.forage.dao.MenuDAO;
-import com.forage.dao.VendorDAO;
 import com.forage.exception.BadRequestException;
 import com.forage.exception.NotFoundException;
 import com.forage.json.ImageJSON;
-import com.forage.json.VendorJSON;
 import com.forage.user.ImageUtility;
 import com.forage.user.Utility;
 import com.sun.jersey.api.client.Client;
@@ -139,6 +128,78 @@ public class ImageAction {
 			throw new NotFoundException("ImageAction.getImage", "Image " + imageId +" not registered ");
 		}
 		return ImageJSON.constructStatus("ImageAction.getImage", "Success", image);
+	}
+	
+	
+	@GET
+	@Path("/menu/{id}")
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getMenuImage(@PathParam("id") BigDecimal menuId){
+		ImageDAO imageDAO = new ImageDAO();
+		List<ImageBean> imageList = imageDAO.getMenuImages(menuId);
+		if(imageList.isEmpty()){
+			throw new NotFoundException("ImageAction.getMenuImage", "Images for menu " + menuId +" not loaded. ");
+		}
+		return ImageJSON.constructListStatus("ImageAction.getMenuImage", "Success", imageList);
+	}
+	
+	@GET
+	@Path("/vendor/{id}")
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getVendorImage(@PathParam("id") BigDecimal vendorId){
+		ImageDAO imageDAO = new ImageDAO();
+		List<ImageBean> imageList = imageDAO.getVendorImages(vendorId);
+		if(imageList.isEmpty()){
+			throw new NotFoundException("ImageAction.getVendorImage", "Images for vendor " + vendorId +" not loaded. ");
+		}
+		return ImageJSON.constructListStatus("ImageAction.getVendorImage", "Success", imageList);
+	}
+	
+	
+	@GET
+	@Path("/customer/{id}")
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getCustomerImage(@PathParam("id") BigDecimal customerId){
+		ImageDAO imageDAO = new ImageDAO();
+		List<ImageBean> imageList = imageDAO.getCustomerImages(customerId);
+		if(imageList.isEmpty()){
+			throw new NotFoundException("ImageAction.getCustomerImage", "Images for customer " + customerId +" not loaded. ");
+		}
+		return ImageJSON.constructListStatus("ImageAction.getCustomerImage", "Success", imageList);
+	}
+	
+	@PUT
+	@Path("/approve/{imageid}/{approver}/{onoff}")  
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String approveImage(@PathParam("imageid") BigDecimal imageId, @PathParam("approver") BigDecimal userId, @PathParam("onoff") String onoff){
+		ImageDAO imageDAO = new ImageDAO();
+		ImageBean image = imageDAO.getImage(imageId);
+		if(image == null || image.getImageId() == null){
+			throw new NotFoundException("ImageAction.approveImage", "Image <"+ imageId +"> do not exists.");
+		}else{
+			if("ON".equals(onoff)){
+				imageDAO.approveImage(imageId, true);
+			}else if("OFF".equals(onoff)){
+				imageDAO.approveImage(imageId, false);
+			}	
+		}
+		imageDAO.updateLastModified(image, userId);
+		return ImageJSON.constructStatus("ImageAction.approveImage", "Success", image);
+	}
+	
+	
+	@PUT
+	@Path("/{id}/tag/{tag}")
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String updateImageTag(@PathParam("id") BigDecimal imageId, 
+								@PathParam("tag") String tag){
+		ImageDAO imageDAO = new ImageDAO();
+		boolean isUpdated = imageDAO.updateImageTag(imageId, tag);
+		if(!isUpdated){
+			throw new NotFoundException("ImageAction.updateImageTag", "Image " + imageId +" not found. ");
+		}
+		ImageBean image = imageDAO.getImage(imageId);
+		return ImageJSON.constructStatus("ImageAction.updateImageTag", "Success", image);
 	}
 	
 	

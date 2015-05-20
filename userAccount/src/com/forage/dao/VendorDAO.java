@@ -103,6 +103,11 @@ public class VendorDAO {
 				vendor.setCuisine2(rs.getString("cuisine2"));
 				vendor.setCuisine3(rs.getString("cuisine3"));
 				vendor.setCuisine4(rs.getString("cuisine4"));
+				
+				vendor.setMealSize1(rs.getString("meal_size1"));
+				vendor.setMealSize2(rs.getString("meal_size2"));
+				vendor.setMealSize3(rs.getString("meal_size3"));
+				vendor.setMealSize4(rs.getString("meal_size4"));
 
 				vendor.setMinPriceMeal(rs.getBigDecimal("min_price_meal"));
 				vendor.setMaxPriceMeal(rs.getBigDecimal("max_price_meal"));
@@ -314,6 +319,30 @@ public class VendorDAO {
 				} catch (SQLException ignore) {
 				}
 		}
+	}
+	
+	public boolean updateSummary(BigDecimal vendorId, String summary) {
+		int updateStatus = 0;
+		Connection dbConn = null;
+		PreparedStatement preparedStmt = null;
+		try {
+			dbConn = DBConnection.getConnection();
+			String updateQuery = "update vendors set summary = ? where vendor_id = ?";
+			preparedStmt = dbConn.prepareStatement(updateQuery);
+			preparedStmt.setString(1, summary);
+			preparedStmt.setBigDecimal(2, vendorId);
+			updateStatus = preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+		return updateStatus > 0 ? true : false;
 	}
 
 	public void updateAddress1(VendorBean vendor) {
@@ -656,9 +685,11 @@ public class VendorDAO {
 		}
 		if (!vendorIDs.isEmpty()) {
 			Iterator<BigDecimal> itr = vendorIDs.iterator();
-			BigDecimal vendorId = itr.next();
-			VendorBean vendor = this.getVendor(vendorId);
-			vendorList.add(vendor);
+			while(itr.hasNext()){
+				BigDecimal vendorId = itr.next();
+				VendorBean vendor = this.getVendor(vendorId);
+				vendorList.add(vendor);	
+			}
 		}
 		return vendorList;
 	}
@@ -728,7 +759,7 @@ public class VendorDAO {
 			String updateQuery = "update vendors set parent_vendor_id = ?, name = ?, contact_person = ?, phone_number = ?, phone_number2 = ?, phone_number3 = ?, last_gps_latitude = ?, last_gps_longitude = ?, " + 
 			"password = ?, email = ?, facebook_unique_id = ?, twitter_unique_id = ?, google_unique_id = ?, address1 = ?, address2 = ?, address3 = ?, " +
 			"profile_image_id = ?, active_flag = ?, approve_flag = ?, status = ?, menu_type = ?, cuisine = ?, cuisine2 = ?, cuisine3 = ?, cuisine4 = ?, " + 
-			"min_price_meal = ?, max_price_meal = ?, breakfast_time = ?, brunch_time = ?, lunch_time = ?, dinner_time = ? where vendor_id = ?";
+			"min_price_meal = ?, max_price_meal = ?, breakfast_time = ?, brunch_time = ?, lunch_time = ?, dinner_time = ?, summary = ? where vendor_id = ?";
 			
 			preparedStmt = dbConn.prepareStatement(updateQuery);
 			
@@ -763,7 +794,8 @@ public class VendorDAO {
 			preparedStmt.setString(29, vendor.getBrunchTime());
 			preparedStmt.setString(30, vendor.getLunchTime());
 			preparedStmt.setString(31, vendor.getDinnerTime());
-			preparedStmt.setBigDecimal(32, vendor.getVendorId());			
+			preparedStmt.setString(32, vendor.getSummary());
+			preparedStmt.setBigDecimal(33, vendor.getVendorId());			
 			preparedStmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -833,8 +865,8 @@ public class VendorDAO {
 			dbConn = DBConnection.getConnection();
 			String insertQuery = "INSERT into vendors(parent_vendor_id, name, phone_number , last_gps_latitude, last_gps_longitude, password , " + 
 			"email , facebook_unique_id, twitter_unique_id, google_unique_id  , address1, address2, address3, profile_image_id, active_flag, approve_flag, " + 
-			"status, menu_type, cuisine , cuisine2 , cuisine3, cuisine4, min_price_meal, max_price_meal, created_by , last_updated_by) " + 
-			"values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			"status, menu_type, cuisine , cuisine2 , cuisine3, cuisine4, meal_size1, meal_size2, meal_size3, meal_size4, min_price_meal, max_price_meal, summary, created_by , last_updated_by) " + 
+			"values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			preparedStmt = dbConn.prepareStatement(insertQuery);
 			
@@ -861,12 +893,19 @@ public class VendorDAO {
 			preparedStmt.setString(19, (vendor.getCuisine()==null ? "INDIAN" : vendor.getCuisine()));
 			preparedStmt.setString(20, vendor.getCuisine2());
 			preparedStmt.setString(21, vendor.getCuisine3());
-			preparedStmt.setString(22, vendor.getCuisine4());			
-			preparedStmt.setBigDecimal(23, (vendor.getMinPriceMeal() == null ? BigDecimal.ZERO : vendor.getMinPriceMeal() ));
-			preparedStmt.setBigDecimal(24, (vendor.getMaxPriceMeal() == null ? BigDecimal.ZERO : vendor.getMaxPriceMeal() ));			
-			preparedStmt.setBigDecimal(25, BigDecimal.ONE);
-			preparedStmt.setBigDecimal(26, BigDecimal.ONE);		
-
+			preparedStmt.setString(22, vendor.getCuisine4());
+			preparedStmt.setString(23, vendor.getMealSize1());
+			preparedStmt.setString(24, vendor.getMealSize2());
+			preparedStmt.setString(25, vendor.getMealSize3());
+			preparedStmt.setString(26, vendor.getMealSize4());
+			preparedStmt.setBigDecimal(27, (vendor.getMinPriceMeal() == null ? BigDecimal.ZERO : vendor.getMinPriceMeal() ));
+			preparedStmt.setBigDecimal(28, (vendor.getMaxPriceMeal() == null ? BigDecimal.ZERO : vendor.getMaxPriceMeal() ));	
+			
+			preparedStmt.setString(29, vendor.getSummary());
+			
+			preparedStmt.setBigDecimal(30, BigDecimal.ONE);
+			preparedStmt.setBigDecimal(31, BigDecimal.ONE);		
+			
 			preparedStmt.execute();
 			
 			rs = preparedStmt.getGeneratedKeys();

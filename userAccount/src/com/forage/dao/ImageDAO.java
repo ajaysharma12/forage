@@ -24,7 +24,7 @@ public class ImageDAO {
 		try {
 			dbConn = DBConnection.getConnection();
 
-			String query = "insert into images (parent_image_id, image_type, image_size, image_category, image_name, image_path, menu_id, customer_id, vendor_id, created_by, creation_date, last_updated_by, last_update_date) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" ;
+			String query = "insert into images (parent_image_id, image_type, image_size, image_category, image_name, image_path, menu_id, customer_id, vendor_id, summary, created_by, creation_date, last_updated_by, last_update_date) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);" ;
 			preparedStmt = dbConn.prepareStatement(query);
 			preparedStmt.setBigDecimal(1, imageBean.getParentImageId());
 			preparedStmt.setString(2, imageBean.getImageType());
@@ -36,10 +36,12 @@ public class ImageDAO {
 			preparedStmt.setBigDecimal(8, imageBean.getCustomerId());
 			preparedStmt.setBigDecimal(9, imageBean.getVendorId());
 			
-			preparedStmt.setBigDecimal(10, imageBean.getCreatedBy());
-			preparedStmt.setDate(11, Utility.convertFromJAVADateToSQLDate(imageBean.getCreatedDate()) );
-			preparedStmt.setBigDecimal(12, imageBean.getLastUpdatedBy());
-			preparedStmt.setDate(13, Utility.convertFromJAVADateToSQLDate(imageBean.getLastUpdateDate()) );
+			preparedStmt.setString(10, imageBean.getSummary());
+			
+			preparedStmt.setBigDecimal(11, imageBean.getCreatedBy());
+			preparedStmt.setDate(12, Utility.convertFromJAVADateToSQLDate(imageBean.getCreatedDate()) );
+			preparedStmt.setBigDecimal(13, imageBean.getLastUpdatedBy());
+			preparedStmt.setDate(14, Utility.convertFromJAVADateToSQLDate(imageBean.getLastUpdateDate()) );
 			
 			preparedStmt.execute();
 			rs = preparedStmt.getGeneratedKeys();
@@ -136,7 +138,7 @@ public class ImageDAO {
 	
 	
 	public ImageBean getImage(BigDecimal imageId){
-		ImageBean imageBean = new ImageBean();
+		ImageBean imageBean = null;
 		
 		Connection dbConn  = null;
 		Statement stmt  = null;
@@ -149,6 +151,7 @@ public class ImageDAO {
 					+ imageId + "'";
 			rs = stmt.executeQuery(query);
 			while(rs.next()){
+				imageBean = new ImageBean();
 				imageBean.setImageId(imageId);
 				imageBean.setParentImageId(rs.getBigDecimal("parent_image_id"));
 				
@@ -209,29 +212,6 @@ public class ImageDAO {
 		}
 
 	}	
-	
-	public void renameImage(BigDecimal imageId, String imageNewName){
-		Connection dbConn  = null;
-		PreparedStatement preparedStmt  = null;
-		
-		try {
-			dbConn = DBConnection.getConnection();
-			String query = "update images set image_name = ? where image_id = ?";
-			preparedStmt = dbConn.prepareStatement(query);
-			preparedStmt.setString(1, imageNewName);
-			preparedStmt.setBigDecimal(2, imageId);
-			preparedStmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
-	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
-		}
-
-	}
 	
 	public void approveImage(BigDecimal imageId, boolean approve){
 		Connection dbConn  = null;
@@ -295,7 +275,8 @@ public class ImageDAO {
 	}
 	
 	
-	public void updateImageTag(BigDecimal imageId, String imageNewTag){
+	public boolean updateImageTag(BigDecimal imageId, String imageTag){
+		int updateStatus = 0;
 		Connection dbConn  = null;
 		PreparedStatement preparedStmt  = null;
 
@@ -303,9 +284,9 @@ public class ImageDAO {
 			dbConn = DBConnection.getConnection();
 			String query = "update images set image_tag = ? where image_id = ?";
 			preparedStmt = dbConn.prepareStatement(query);
-			preparedStmt.setString(1, imageNewTag);
+			preparedStmt.setString(1, imageTag);
 			preparedStmt.setBigDecimal(2, imageId);
-			preparedStmt.executeUpdate();
+			updateStatus = preparedStmt.executeUpdate();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -315,6 +296,32 @@ public class ImageDAO {
 	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
+		return updateStatus > 0 ? true : false;
+
+	}
+	
+	public boolean updateImageSummary(BigDecimal imageId, String summary){
+		int updateStatus = 0;
+		Connection dbConn  = null;
+		PreparedStatement preparedStmt  = null;
+
+		try {
+			dbConn = DBConnection.getConnection();
+			String query = "update images set summary = ? where image_id = ?";
+			preparedStmt = dbConn.prepareStatement(query);
+			preparedStmt.setString(1, summary);
+			preparedStmt.setBigDecimal(2, imageId);
+			updateStatus = preparedStmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+		return updateStatus > 0 ? true : false;
 
 	}
 	

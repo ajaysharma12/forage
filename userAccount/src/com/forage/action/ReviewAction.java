@@ -31,7 +31,7 @@ public class ReviewAction {
 		if(review == null || review.getReviewId() == null){
 			throw new NotFoundException("getReview", "Review <"+ reviewId + "> not found.");
 		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.getReview", "Success", review);
 	}
 	
 	@GET
@@ -75,7 +75,7 @@ public class ReviewAction {
 		if(review == null || review.getReviewId() == null){
 			throw new GoneException("createReview", "Review <" + review.getRemarks() +"> not created.");
 		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.createReview", "Success", review);
 	}
 	
 	@PUT  
@@ -91,7 +91,7 @@ public class ReviewAction {
 		if(review == null || review.getReviewId() == null){
 			throw new NotFoundException("updateReview", "Review not exists.");
 		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.updateReview", "Success", review);
 	}
 
 	
@@ -100,7 +100,6 @@ public class ReviewAction {
 	@Produces(MediaType.APPLICATION_JSON) 
 	public String approveReview(@PathParam("reviewid") BigDecimal reviewId, @PathParam("approver") BigDecimal userId, @PathParam("onoff") String onoff){
 		ReviewDAO reviewDAO = new ReviewDAO();
-		reviewDAO.approveReview(reviewId, true);
 		ReviewBean review = reviewDAO.getReview(reviewId);
 		if(review == null || review.getReviewId() == null){
 			throw new NotFoundException("ReviewAction.updateReview", "Review <"+ reviewId +"> do not exists.");
@@ -111,10 +110,7 @@ public class ReviewAction {
 			reviewDAO.approveReview(reviewId, false);
 		}
 		reviewDAO.updateLastModified(review, userId);
-		if(review == null || review.getReviewId() == null){
-			throw new NotFoundException("approveReview", "Review <"+reviewId+"> not exists.");
-		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.approveReview", "Success", review);
 	}
 	
 	@PUT
@@ -129,7 +125,7 @@ public class ReviewAction {
 		if(review == null || review.getReviewId() == null){
 			throw new NotFoundException("enableReview", "Review <"+reviewId+"> not exists.");
 		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.enableReview", "Success", review);
 	}
 	
 	@GET
@@ -143,7 +139,7 @@ public class ReviewAction {
 		if(review == null || review.getReviewId() == null){
 			throw new NotFoundException("disableReview", "Review <"+reviewId+"> not exists.");
 		}
-		return ReviewJSON.construct(review);
+		return ReviewJSON.constructStatus("ReviewAction.disableReview", "Success", review);
 	}
 	
 }

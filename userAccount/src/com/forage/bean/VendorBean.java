@@ -40,12 +40,19 @@ public class VendorBean implements Serializable {
 	String activeFlag;
 	String approveFlag;
 	
+	String summary;
+	
 	String status;
 	String menuType;
 	String cuisine;
 	String cuisine2;
 	String cuisine3;
 	String cuisine4;
+	
+	String mealSize1;
+	String mealSize2;
+	String mealSize3;
+	String mealSize4;
 	
 	BigDecimal minPriceMeal;
 	BigDecimal maxPriceMeal;
@@ -308,5 +315,36 @@ public class VendorBean implements Serializable {
 	}
 	public void setDinnerTime(String dinnerTime) {
 		this.dinnerTime = dinnerTime;
-	}	
+	}
+	public String getMealSize1() {
+		return mealSize1;
+	}
+	public void setMealSize1(String mealSize1) {
+		this.mealSize1 = mealSize1;
+	}
+	public String getMealSize2() {
+		return mealSize2;
+	}
+	public void setMealSize2(String mealSize2) {
+		this.mealSize2 = mealSize2;
+	}
+	public String getMealSize3() {
+		return mealSize3;
+	}
+	public void setMealSize3(String mealSize3) {
+		this.mealSize3 = mealSize3;
+	}
+	public String getMealSize4() {
+		return mealSize4;
+	}
+	public void setMealSize4(String mealSize4) {
+		this.mealSize4 = mealSize4;
+	}
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
 }

@@ -26,6 +26,8 @@ public class ImageBean implements Serializable {
 	String approveFlag;
 	String enabledFlag;
 	
+	String summary;
+	
 	BigDecimal createdBy;
 	Date createdDate;
 	BigDecimal lastUpdatedBy;
@@ -133,6 +135,11 @@ public class ImageBean implements Serializable {
 	public void setImageTag(String imageTag) {
 		this.imageTag = imageTag;
 	}
-	
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
 	
 }
