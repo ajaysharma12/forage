@@ -16,6 +16,7 @@ import com.forage.exception.AlreadyExistException;
 import com.forage.exception.BadRequestException;
 import com.forage.exception.NotFoundException;
 import com.forage.user.DBConnection;
+import com.forage.user.Utility;
 
 public class CustomerDAO {
 
@@ -632,6 +633,63 @@ public class CustomerDAO {
 		return customer;
 	}
 	
+	
+	public void update(CustomerBean customer) {
+		Connection dbConn  = null;
+		PreparedStatement preparedStmt  = null;
+		
+		try {
+			dbConn = DBConnection.getConnection();
+
+			String updateQuery = "update customers phone_number = ? ,first_name = ? , last_name = ? , gender = ? , phone_number = ? , last_gps_latitude = ? , last_gps_longitude = ? , " +
+			"password = ? , email = ? , facebook_unique_id = ? , twitter_unique_id = ? , google_unique_id = ? , address = ? , address2 = ? , address3 = ? , shipping_address = ? , " + 
+			"profile_image_id = ? , summary = ? , active_flag = ? , approve_flag = ? , last_updated_by = ? ," + 
+			"last_update_date ? , last_login_date ? where customer_id = ?";
+			preparedStmt = dbConn .prepareStatement(updateQuery);
+			
+			preparedStmt.setString(1, customer.getPhoneNumber());
+			preparedStmt.setString(2, customer.getFirstName());
+			preparedStmt.setString(3, customer.getLastName());
+			preparedStmt.setString(4, customer.getGender());
+			preparedStmt.setString(5, customer.getPhoneNumber());
+			preparedStmt.setDouble(6, customer.getLastGPSLatitude());
+			preparedStmt.setDouble(7, customer.getLastGPSLongitude());
+			
+			preparedStmt.setString(8, customer.getPassword());			
+			preparedStmt.setString(9, customer.getEmail());
+			preparedStmt.setString(10, customer.getFacebookUniqueId());
+			preparedStmt.setString(11, customer.getTwitterUniqueId());
+			preparedStmt.setString(12, customer.getGoogleUniqueId());
+			preparedStmt.setBigDecimal(13, customer.getAddress());
+			preparedStmt.setBigDecimal(14, customer.getAddress2());
+			preparedStmt.setBigDecimal(15, customer.getAddress3());
+			preparedStmt.setBigDecimal(16, customer.getShippingAddress());
+			
+			preparedStmt.setBigDecimal(17, customer.getProfileImageId());
+			preparedStmt.setString(18, customer.getSummary());
+			preparedStmt.setString(19, customer.getActiveFlag());
+			preparedStmt.setString(20, customer.getApproveFlag());
+			
+			preparedStmt.setBigDecimal(21, customer.getLastUpdatedBy());
+			preparedStmt.setDate(22, Utility.convertFromJAVADateToSQLDate(customer.getLastUpdateDate()) );
+			preparedStmt.setDate(23, Utility.convertFromJAVADateToSQLDate(customer.getLastLoginDate()) );
+			preparedStmt.setBigDecimal(24, customer.getCustomerId());
+			
+			preparedStmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+	        if (preparedStmt  != null) try { preparedStmt.close(); } catch (SQLException ignore) {}
+	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
+		}
+
+	}
+	
 
 	public static void main(String args[]) {
 		CustomerDAO cust = new CustomerDAO();
@@ -649,3 +707,4 @@ public class CustomerDAO {
 	}
 
 }
+

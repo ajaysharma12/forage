@@ -4,9 +4,15 @@ import java.sql.SQLException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import com.forage.bean.LookupTypeBean;
+import com.forage.dao.LookupTypeDAO;
+import com.forage.exception.NotFoundException;
+import com.forage.json.LookupJSON;
 //Path: http://localhost/<appln-folder-name>/register
 @Path("/register")
 public class Register {
@@ -67,5 +73,18 @@ public class Register {
  
         return result;
     }
+    
+    
+    @GET	
+	@Path("/testrun")  
+	@Produces(MediaType.APPLICATION_JSON) 
+	public String getLookupListOnTag( @PathParam("type") String lookupType,
+									@PathParam("tag") String tag){
+		
+    	TempVendorDataUpload upload = new TempVendorDataUpload();
+    	upload.loadFromFile();
+		
+		return Utility.constructJSON("testrun",false, "Error occured");
+	}
  
 }

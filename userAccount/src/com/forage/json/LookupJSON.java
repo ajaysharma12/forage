@@ -95,6 +95,34 @@ public class LookupJSON {
 	}
 	
 	
+	
+	/**
+	 * Method to construct JSON string for LookupValueBean along with actionName and Status
+	 * 
+	 * @param action
+	 * @param status
+	 * @param customer
+	 * @return
+	 * @throws IOException 
+	 */
+	public static String constructStatus(String action, String status, LookupValueBean lookupValue) {
+		ObjectMapper mapper = new ObjectMapper();
+		String json = null;
+		
+		Map jsonMap = new LinkedHashMap();
+		jsonMap.put("action", action);
+		jsonMap.put("status", status);
+		jsonMap.put("message", lookupValue);
+		
+		try {
+			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return json;
+	}
+	
+	
 	/**
 	 * Method to construct JSON string for CustomerBean along with actionName and Status
 	 * 

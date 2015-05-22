@@ -13,6 +13,7 @@ public class LookupTypeBean implements Serializable {
 	private static final long serialVersionUID = 7955472799366727225L;
 
 	String lookupType;
+	String vendorType;
 	
 	BigDecimal createdBy;
 	Date createdDate;
@@ -64,5 +65,10 @@ public class LookupTypeBean implements Serializable {
 	public void setLookupValues(List<LookupValueBean> lookupValues) {
 		this.lookupValues = lookupValues;
 	}
-	
+	public String getVendorType() {
+		return vendorType;
+	}
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
+	}
 }

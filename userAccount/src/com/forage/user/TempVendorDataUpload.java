@@ -140,20 +140,10 @@ public class TempVendorDataUpload {
 	private void loadData(TempBean tempVend){
 		
 		VendorBean vendor = initiateVendor(tempVend);
-//		AddressBean addr = createAddress(tempVend);
-//		vendor.setAddress1(addr.getAddressId());
-//		vendor.setAddrBean1(addr);
-		
+		AddressBean addr = createAddress(tempVend);
+		vendor.setAddress1(addr.getAddressId());
+		vendor.setAddrBean1(addr);
 		VendorDAO vendorDAO = new VendorDAO();
-		
-		VendorBean vendorCheck = null;
-		vendorCheck = vendorDAO.getVendor(vendor.getPhoneNumber());
-		if(vendorCheck != null){
-			vendor.setParentVendorId(vendorCheck.getVendorId());
-			vendor.setPhoneNumber3(vendor.getPhoneNumber2());
-			vendor.setPhoneNumber2(vendor.getPhoneNumber());
-			vendor.setPhoneNumber(vendor.getPhoneNumber() + "_" + Utility.getDateFormatted());
-		}
 		vendorDAO.insert(vendor);		
 	}
 	
@@ -229,6 +219,7 @@ public class TempVendorDataUpload {
 	
 	private AddressBean createAddress(TempBean tempVend){
 		AddressBean addr = new AddressBean();
+		addr.setCity("INDIA");
 		String[] tokens = tempVend.getAddress().split(",");
 		for (int i = 0; i < tokens.length; i++) {
 			switch(i){
@@ -301,6 +292,11 @@ public class TempVendorDataUpload {
 	// ************************ READ JSON FROM FILE AND UPLOAD DATA ************************************ //
 	public static void main(String[] args) {
 		TempVendorDataUpload upload = new TempVendorDataUpload();
+		upload.loadFromFile();
+	}
+	
+	
+	public void loadFromFile(){
 		try{
 			// Open the file
 			FileInputStream fstream = new FileInputStream("D:/Softwares/Mob/Apl_Req/vendorData_May19_2015.txt");
@@ -312,9 +308,9 @@ public class TempVendorDataUpload {
 			while ((strLine = br.readLine()) != null)   {
 			  // Print the content on the console
 			  System.out.println (strLine);
-			  TempBean tempVend = upload.jsonToTempVend(strLine);
+			  TempBean tempVend = this.jsonToTempVend(strLine);
 			  if(tempVend != null){
-					upload.loadData(tempVend);
+					this.loadData(tempVend);
 				}
 				System.out.println("#"+i+"    done **************###########################******************");
 				i++;

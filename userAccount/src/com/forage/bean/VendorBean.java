@@ -68,6 +68,9 @@ public class VendorBean implements Serializable {
 	Date lastUpdateDate;
 	Date lastLoginDate;
 	
+	//calculated columns
+	BigDecimal searchDistance;
+	
 	List<MenuBean> menuList;
 	
 	public BigDecimal getVendorId() {
@@ -346,5 +349,10 @@ public class VendorBean implements Serializable {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-	
+	public BigDecimal getSearchDistance() {
+		return searchDistance;
+	}
+	public void setSearchDistance(BigDecimal searchDistance) {
+		this.searchDistance = searchDistance;
+	}	
 }

@@ -635,10 +635,10 @@ public class VendorDAO {
 
 	}
 
-	public List<VendorBean> getVendorByLatLong(Double latitude,
-			Double longitude, BigDecimal distance) {
+	public List<VendorBean> getVendorByLatLong(Double latitude, Double longitude, BigDecimal distance) {
 
 		List<BigDecimal> vendorIDs = new ArrayList<BigDecimal>();
+		List<BigDecimal> distanceList = new ArrayList<BigDecimal>();
 		List<VendorBean> vendorList = new ArrayList<VendorBean>();
 
 		Connection dbConn = null;
@@ -657,8 +657,8 @@ public class VendorDAO {
 
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				BigDecimal vendorId = rs.getBigDecimal("vendor_id");
-				vendorIDs.add(vendorId);
+				vendorIDs.add(rs.getBigDecimal("vendor_id"));
+				distanceList.add(rs.getBigDecimal("distance"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -685,10 +685,13 @@ public class VendorDAO {
 		}
 		if (!vendorIDs.isEmpty()) {
 			Iterator<BigDecimal> itr = vendorIDs.iterator();
+			int i = 0;
 			while(itr.hasNext()){
 				BigDecimal vendorId = itr.next();
 				VendorBean vendor = this.getVendor(vendorId);
-				vendorList.add(vendor);	
+				vendor.setSearchDistance(distanceList.get(i));
+				vendorList.add(vendor);
+				i++;
 			}
 		}
 		return vendorList;
@@ -818,7 +821,7 @@ public class VendorDAO {
 	}
 	
 	
-	public String getNextAutoIncreamentVendor(){
+	public String getNextAutoIncrementVendor(){
 		String autoIncrement = null;
 		Connection dbConn = null;
 		Statement stmt = null;
@@ -854,7 +857,8 @@ public class VendorDAO {
 		if(vendorCheck != null){
 			vendor.setPhoneNumber3(vendor.getPhoneNumber2());
 			vendor.setPhoneNumber2(vendor.getPhoneNumber());
-			vendor.setPhoneNumber(this.getNextAutoIncreamentVendor());
+			vendor.setPhoneNumber(this.getNextAutoIncrementVendor());
+			vendor.setParentVendorId(vendorCheck.getVendorId());
 		}
 		
 		BigDecimal vendorKey = BigDecimal.ZERO;
@@ -863,10 +867,10 @@ public class VendorDAO {
 		PreparedStatement preparedStmt = null;
 		try {
 			dbConn = DBConnection.getConnection();
-			String insertQuery = "INSERT into vendors(parent_vendor_id, name, phone_number , last_gps_latitude, last_gps_longitude, password , " + 
+			String insertQuery = "INSERT into vendors(parent_vendor_id, name, phone_number , phone_number2, phone_number3, last_gps_latitude, last_gps_longitude, password , " + 
 			"email , facebook_unique_id, twitter_unique_id, google_unique_id  , address1, address2, address3, profile_image_id, active_flag, approve_flag, " + 
 			"status, menu_type, cuisine , cuisine2 , cuisine3, cuisine4, meal_size1, meal_size2, meal_size3, meal_size4, min_price_meal, max_price_meal, summary, created_by , last_updated_by) " + 
-			"values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			"values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			preparedStmt = dbConn.prepareStatement(insertQuery);
 			
@@ -875,36 +879,38 @@ public class VendorDAO {
 			preparedStmt.setString(2, vendor.getName() );
 			if(vendor.getPhoneNumber() == null) throw new BadRequestException("VendorDAO.insert", "Vendor phone not provided");
 			preparedStmt.setString(3, vendor.getPhoneNumber());
-			preparedStmt.setDouble(4, (vendor.getLastGPSLatitude() == null ? 0 : vendor.getLastGPSLatitude()) );
-			preparedStmt.setDouble(5, (vendor.getLastGPSLongitude() == null ? 0 : vendor.getLastGPSLongitude()) );
-			preparedStmt.setString(6, vendor.getPassword());			
-			preparedStmt.setString(7, vendor.getEmail());
-			preparedStmt.setString(8, vendor.getFacebookUniqueId());
-			preparedStmt.setString(9, vendor.getTwitterUniqueId());
-			preparedStmt.setString(10, vendor.getGoogleUniqueId());
-			preparedStmt.setBigDecimal(11, vendor.getAddress1());
-			preparedStmt.setBigDecimal(12, vendor.getAddress2());
-			preparedStmt.setBigDecimal(13, vendor.getAddress3());
-			preparedStmt.setBigDecimal(14, vendor.getProfileImageId());
-			preparedStmt.setString(15, (vendor.getActiveFlag()==null ? "Y" : vendor.getActiveFlag() ));
-			preparedStmt.setString(16, (vendor.getApproveFlag()==null ? "Y" : vendor.getApproveFlag() ));
-			preparedStmt.setString(17, (vendor.getStatus()==null ? "NEW" : vendor.getStatus()));
-			preparedStmt.setString(18, (vendor.getMenuType()==null ? "VEG" : vendor.getMenuType()));
-			preparedStmt.setString(19, (vendor.getCuisine()==null ? "INDIAN" : vendor.getCuisine()));
-			preparedStmt.setString(20, vendor.getCuisine2());
-			preparedStmt.setString(21, vendor.getCuisine3());
-			preparedStmt.setString(22, vendor.getCuisine4());
-			preparedStmt.setString(23, vendor.getMealSize1());
-			preparedStmt.setString(24, vendor.getMealSize2());
-			preparedStmt.setString(25, vendor.getMealSize3());
-			preparedStmt.setString(26, vendor.getMealSize4());
-			preparedStmt.setBigDecimal(27, (vendor.getMinPriceMeal() == null ? BigDecimal.ZERO : vendor.getMinPriceMeal() ));
-			preparedStmt.setBigDecimal(28, (vendor.getMaxPriceMeal() == null ? BigDecimal.ZERO : vendor.getMaxPriceMeal() ));	
+			preparedStmt.setString(4, vendor.getPhoneNumber2());
+			preparedStmt.setString(5, vendor.getPhoneNumber3());
+			preparedStmt.setDouble(6, (vendor.getLastGPSLatitude() == null ? 0 : vendor.getLastGPSLatitude()) );
+			preparedStmt.setDouble(7, (vendor.getLastGPSLongitude() == null ? 0 : vendor.getLastGPSLongitude()) );
+			preparedStmt.setString(8, vendor.getPassword());			
+			preparedStmt.setString(9, vendor.getEmail());
+			preparedStmt.setString(10, vendor.getFacebookUniqueId());
+			preparedStmt.setString(11, vendor.getTwitterUniqueId());
+			preparedStmt.setString(12, vendor.getGoogleUniqueId());
+			preparedStmt.setBigDecimal(13, vendor.getAddress1());
+			preparedStmt.setBigDecimal(14, vendor.getAddress2());
+			preparedStmt.setBigDecimal(15, vendor.getAddress3());
+			preparedStmt.setBigDecimal(16, vendor.getProfileImageId());
+			preparedStmt.setString(17, (vendor.getActiveFlag()==null ? "Y" : vendor.getActiveFlag() ));
+			preparedStmt.setString(18, (vendor.getApproveFlag()==null ? "Y" : vendor.getApproveFlag() ));
+			preparedStmt.setString(19, (vendor.getStatus()==null ? "NEW" : vendor.getStatus()));
+			preparedStmt.setString(20, (vendor.getMenuType()==null ? "VEG" : vendor.getMenuType()));
+			preparedStmt.setString(21, (vendor.getCuisine()==null ? "INDIAN" : vendor.getCuisine()));
+			preparedStmt.setString(22, vendor.getCuisine2());
+			preparedStmt.setString(23, vendor.getCuisine3());
+			preparedStmt.setString(24, vendor.getCuisine4());
+			preparedStmt.setString(25, vendor.getMealSize1());
+			preparedStmt.setString(26, vendor.getMealSize2());
+			preparedStmt.setString(27, vendor.getMealSize3());
+			preparedStmt.setString(28, vendor.getMealSize4());
+			preparedStmt.setBigDecimal(29, (vendor.getMinPriceMeal() == null ? BigDecimal.ZERO : vendor.getMinPriceMeal() ));
+			preparedStmt.setBigDecimal(30, (vendor.getMaxPriceMeal() == null ? BigDecimal.ZERO : vendor.getMaxPriceMeal() ));	
 			
-			preparedStmt.setString(29, vendor.getSummary());
+			preparedStmt.setString(31, vendor.getSummary());
 			
-			preparedStmt.setBigDecimal(30, BigDecimal.ONE);
-			preparedStmt.setBigDecimal(31, BigDecimal.ONE);		
+			preparedStmt.setBigDecimal(32, BigDecimal.ONE);
+			preparedStmt.setBigDecimal(33, BigDecimal.ONE);		
 			
 			preparedStmt.execute();
 			

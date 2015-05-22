@@ -11,7 +11,7 @@ import com.forage.user.DBConnection;
 public class LookupTypeDAO {
 
 	public LookupTypeBean getLookupType(String lookupType, String tag) {
-		LookupTypeBean lookupTypeBean = new LookupTypeBean();
+		LookupTypeBean lookupTypeBean = null;
 		Connection dbConn  = null;
 		Statement stmt  = null;
 		ResultSet rs  = null;
@@ -22,7 +22,9 @@ public class LookupTypeDAO {
 			String query = "SELECT * FROM lookup_types WHERE lookup_type = '" + lookupType + "'";
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
+				lookupTypeBean = new LookupTypeBean();
 				lookupTypeBean.setLookupType(rs.getString("lookup_type"));
+				lookupTypeBean.setVendorType(rs.getString("vendor_type"));
 				lookupTypeBean.setCreatedBy(rs.getBigDecimal("created_by"));
 				lookupTypeBean.setCreatedDate(rs.getDate("creation_date"));
 				lookupTypeBean.setLastUpdatedBy(rs.getBigDecimal("last_updated_by"));
@@ -38,13 +40,11 @@ public class LookupTypeDAO {
 	        if (stmt  != null) try { stmt.close(); } catch (SQLException ignore) {}
 	        if (dbConn != null) try { dbConn.close(); } catch (SQLException ignore) {}
 		}
-		
-		// LookupValue List starts
-		LookupValueDAO lookupValueDAO = new LookupValueDAO();
-		lookupTypeBean.setLookupValues(lookupValueDAO.getLookupValues(lookupType, tag));
-		// LookupValue List ends
-
+		if(lookupTypeBean != null){
+			// LookupValue List starts
+			LookupValueDAO lookupValueDAO = new LookupValueDAO();
+			lookupTypeBean.setLookupValues(lookupValueDAO.getLookupValues(lookupType, tag));	
+		}
 		return lookupTypeBean;
 	}
-
 }
