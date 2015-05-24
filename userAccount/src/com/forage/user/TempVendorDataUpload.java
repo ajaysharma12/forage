@@ -167,10 +167,10 @@ public class TempVendorDataUpload {
 			if("".equals(tempVend.getMenu_type())){
 				menuCode = "VEG";
 			}else{
-				menuCode = lookupAction.getLookupCode("FOOD_TYPE", null, tempVend.getMenu_type());
+				menuCode = lookupAction.getLookupCode("TIFFIN", "FOOD_TYPE", null, tempVend.getMenu_type());
 				if(menuCode == null){ // insert new FOOD_TYPE lookup
-					lookupAction.createLookupCode("FOOD_TYPE", tempVend.getMenu_type(), BigDecimal.ONE);
-					menuCode = lookupAction.getLookupCode("FOOD_TYPE", null, tempVend.getMenu_type());
+					lookupAction.createLookupCode("TIFFIN", "FOOD_TYPE", tempVend.getMenu_type(), BigDecimal.ONE);
+					menuCode = lookupAction.getLookupCode("TIFFIN", "FOOD_TYPE", null, tempVend.getMenu_type());
 				}	
 			}
 			vendor.setMenuType(menuCode);
@@ -181,10 +181,10 @@ public class TempVendorDataUpload {
 			String cuisineArray[] = tempVend.getCuisine().split(",");
 			for (int cuCount = 0 ; cuCount < cuisineArray.length ; cuCount++) {
 			
-				cuisineCode = lookupAction.getLookupCode("CUISINE_TYPE", null, cuisineArray[cuCount] );
+				cuisineCode = lookupAction.getLookupCode("TIFFIN", "CUISINE_TYPE", null, cuisineArray[cuCount] );
 				if(cuisineCode == null){ // insert new CUISINE_TYPE lookup code
-					lookupAction.createLookupCode("CUISINE_TYPE", cuisineArray[cuCount], BigDecimal.ONE);
-					cuisineCode = lookupAction.getLookupCode("CUISINE_TYPE", null, cuisineArray[cuCount] );
+					lookupAction.createLookupCode("TIFFIN", "CUISINE_TYPE", cuisineArray[cuCount], BigDecimal.ONE);
+					cuisineCode = lookupAction.getLookupCode("TIFFIN", "CUISINE_TYPE", null, cuisineArray[cuCount] );
 				}
 				if(cuCount == 0) vendor.setCuisine(cuisineCode);
 				if(cuCount == 1) vendor.setCuisine2(cuisineCode);
@@ -240,19 +240,19 @@ public class TempVendorDataUpload {
 		LookupValueBean lookupValue = null;
 		String cityCode = null;
 		if(tempVend.getCity() != null){  // check to see the if city is registered in the Lookup table	
-			cityCode = lookupAction.getLookupCode("CITY", null, tempVend.getCity());
+			cityCode = lookupAction.getLookupCode("TIFFIN", "CITY", null, tempVend.getCity());
 			if(cityCode == null){ // insert new CITY lookup
-				lookupAction.createLookupCode("CITY", tempVend.getCity(), BigDecimal.ONE);
-				cityCode = lookupAction.getLookupCode("CITY", null, tempVend.getCity());
+				lookupAction.createLookupCode("TIFFIN", "CITY", tempVend.getCity(), BigDecimal.ONE);
+				cityCode = lookupAction.getLookupCode("TIFFIN", "CITY", null, tempVend.getCity());
 			}
 			addr.setCity(cityCode);
 		}
 		
 		String localityCode = null;		
 		if(cityCode != null && tempVend.getLocality() != null){
-			localityCode = lookupAction.getLookupCode("LOCALITY", cityCode, tempVend.getLocality());
+			localityCode = lookupAction.getLookupCode("TIFFIN", "LOCALITY", cityCode, tempVend.getLocality());
 			if(localityCode == null){ // insert new locality
-				String lookupValueString = lookupAction.createLookupCode("LOCALITY", tempVend.getLocality(), BigDecimal.ONE);
+				String lookupValueString = lookupAction.createLookupCode("TIFFIN", "LOCALITY", tempVend.getLocality(), BigDecimal.ONE);
 				
 				
 				ObjectMapper mapper = new ObjectMapper();
@@ -265,11 +265,11 @@ public class TempVendorDataUpload {
 					e.printStackTrace();
 				}
 				
-				lookupAction.tagLookupCode("LOCALITY", lookupValue.getLookupCode(), cityCode);				
-				localityCode = lookupAction.getLookupCode("LOCALITY", cityCode, tempVend.getLocality());
+				lookupAction.tagLookupCode("TIFFIN", "LOCALITY", lookupValue.getLookupCode(), cityCode);				
+				localityCode = lookupAction.getLookupCode("TIFFIN", "LOCALITY", cityCode, tempVend.getLocality());
 				
 				if(tempVend.getZone() != null && !tempVend.getZone().equals(tempVend.getLocality()) && lookupValue.getAttribute1() == null){
-					lookupAction.updateLocalityZone("LOCALITY", localityCode, tempVend.getZone());
+					lookupAction.updateLocalityZone("TIFFIN", "LOCALITY", localityCode, tempVend.getZone());
 				}
 			}
 			

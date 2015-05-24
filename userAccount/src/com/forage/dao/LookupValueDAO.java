@@ -17,7 +17,7 @@ import com.forage.user.DBConnection;
 public class LookupValueDAO {
 	
 	
-	public LookupValueBean getLookupValueOnMeaningTag(String lookupType, String meaning, String tag){
+	public LookupValueBean getLookupValueOnMeaningTag(String vendorType, String lookupType, String meaning, String tag){
 		LookupValueBean lookupValueBean = null;
 		Connection dbConn  = null;
 		Statement stmt  = null;
@@ -28,15 +28,16 @@ public class LookupValueDAO {
 			stmt = dbConn.createStatement();
 			String query = null;
 			if(tag == null || "".equals(tag)){
-				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and language = 'US'";	
+				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and language = 'US' and vendor_type = '" + vendorType + "'";	
 			}else{
-				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and tag = '"+ tag + "' and language = 'US'";
+				query = "SELECT * FROM lookup_values WHERE lookup_type = '" + lookupType + "' and meaning = '" + meaning + "' and tag = '"+ tag + "' and language = 'US' and vendor_type = '" + vendorType + "'";
 			}
 			
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				lookupValueBean = new LookupValueBean();
 				lookupValueBean.setLookupType(rs.getString("lookup_type"));
+				lookupValueBean.setVendorType(rs.getString("vendor_type"));
 				lookupValueBean.setLanguage(rs.getString("language"));
 				lookupValueBean.setLookupCode(rs.getString("lookup_code"));
 				lookupValueBean.setMeaning(rs.getString("meaning"));
@@ -77,7 +78,7 @@ public class LookupValueDAO {
 	
 	
 	
-	public List<LookupValueBean> getLookupValues(String lookupType, String tag){
+	public List<LookupValueBean> getLookupValues(String vendorType, String lookupType, String tag){
 		List<LookupValueBean> lookupValueList = new ArrayList<LookupValueBean>();
 		List<String> lookupCodes = new ArrayList<String>();
 		
@@ -114,14 +115,14 @@ public class LookupValueDAO {
 			Iterator<String> itr = lookupCodes.iterator();
 			while(itr.hasNext()){
 				String lookupCode = itr.next();
-				lookupValueList.add(this.getLookupValue(lookupType, lookupCode));	
+				lookupValueList.add(this.getLookupValue(vendorType, lookupType, lookupCode));	
 			}
 		}
 		
 		return lookupValueList;
 	}
 	
-	public List<LookupValueBean> getLookupValues(String lookupType, String tag, String language){
+	public List<LookupValueBean> getLookupValues(String vendorType, String lookupType, String tag, String language){
 		List<LookupValueBean> lookupValueList = new ArrayList<LookupValueBean>();
 		List<String> lookupCodes = new ArrayList<String>();
 		
@@ -152,14 +153,14 @@ public class LookupValueDAO {
 			Iterator<String> itr = lookupCodes.iterator();
 			while(itr.hasNext()){
 				String lookupCode = itr.next();
-				lookupValueList.add(this.getLookupValue(lookupType, lookupCode));	
+				lookupValueList.add(this.getLookupValue(vendorType, lookupType, lookupCode));	
 			}
 		}
 		
 		return lookupValueList;
 	}
 	
-	public LookupValueBean getLookupValue(String lookupType, String lookupCode, String language){
+	public LookupValueBean getLookupValue(String vendorType, String lookupType, String lookupCode, String language){
 		LookupValueBean lookupValueBean = new LookupValueBean();
 		
 		Connection dbConn  = null;
@@ -212,9 +213,9 @@ public class LookupValueDAO {
 	}
 	
 	
-	public LookupValueBean getLookupValue(String lookupType, String lookupCode){
+	public LookupValueBean getLookupValue(String vendorType, String lookupType, String lookupCode){
 		String language = "US";		
-		return this.getLookupValue(lookupType, lookupCode, language);
+		return this.getLookupValue(vendorType, lookupType, lookupCode, language);
 	}
 	
 	
@@ -222,7 +223,7 @@ public class LookupValueDAO {
 		
 		// Lookup presence check
 		LookupValueBean lookupValueBeanCheck = new LookupValueBean();
-		lookupValueBeanCheck = this.getLookupValue(lookupValueBean.getLookupType(), lookupValueBean.getLookupCode());
+		lookupValueBeanCheck = this.getLookupValue(lookupValueBean.getVendorType(), lookupValueBean.getLookupType(), lookupValueBean.getLookupCode());
 		if(lookupValueBeanCheck.getMeaning() != null){
 			return lookupValueBeanCheck;
 		}
@@ -237,26 +238,27 @@ public class LookupValueDAO {
 
 		try {
 			dbConn = DBConnection.getConnection();
-			String query = "INSERT into lookup_values ( lookup_type, language, lookup_code, meaning, description, tag, attribute1, attribute2, attribute3, attribute4, attribute5, start_Date_active, end_date_active, approve_flag, enabled_flag, created_by, last_updated_by, last_update_login) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			String query = "INSERT into lookup_values ( lookup_type, vendor_type, language, lookup_code, meaning, description, tag, attribute1, attribute2, attribute3, attribute4, attribute5, start_Date_active, end_date_active, approve_flag, enabled_flag, created_by, last_updated_by, last_update_login) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 			preparedStmt = dbConn.prepareStatement(query);
 			preparedStmt.setString(1, lookupValueBean.getLookupType());
-			preparedStmt.setString(2, lookupValueBean.getLanguage());
-			preparedStmt.setString(3, lookupValueBean.getLookupCode());
-			preparedStmt.setString(4, lookupValueBean.getMeaning());
-			preparedStmt.setString(5, lookupValueBean.getDescription());
-			preparedStmt.setString(6, lookupValueBean.getTag());
-			preparedStmt.setString(7, lookupValueBean.getAttribute1());
-			preparedStmt.setString(8, lookupValueBean.getAttribute2());
-			preparedStmt.setString(9, lookupValueBean.getAttribute3());
-			preparedStmt.setString(10, lookupValueBean.getAttribute4());
-			preparedStmt.setString(11, lookupValueBean.getAttribute5());
-			preparedStmt.setDate(12, lookupValueBean.getStartActiveDate() !=null ? new java.sql.Date(lookupValueBean.getStartActiveDate().getTime()) :   null  );
-			preparedStmt.setDate(13, lookupValueBean.getEndActiveDate() !=null ? new java.sql.Date(lookupValueBean.getEndActiveDate().getTime()) :   null  );
-			preparedStmt.setString(14, lookupValueBean.getApproveFlag() != null ? lookupValueBean.getApproveFlag() : "N"    );
-			preparedStmt.setString(15, lookupValueBean.getEnabledFlag() != null ? lookupValueBean.getEnabledFlag() : "Y"    );
-			preparedStmt.setBigDecimal(16, createdBy);
+			preparedStmt.setString(2, lookupValueBean.getVendorType());
+			preparedStmt.setString(3, lookupValueBean.getLanguage());
+			preparedStmt.setString(4, lookupValueBean.getLookupCode());
+			preparedStmt.setString(5, lookupValueBean.getMeaning());
+			preparedStmt.setString(6, lookupValueBean.getDescription());
+			preparedStmt.setString(7, lookupValueBean.getTag());
+			preparedStmt.setString(8, lookupValueBean.getAttribute1());
+			preparedStmt.setString(9, lookupValueBean.getAttribute2());
+			preparedStmt.setString(10, lookupValueBean.getAttribute3());
+			preparedStmt.setString(11, lookupValueBean.getAttribute4());
+			preparedStmt.setString(12, lookupValueBean.getAttribute5());
+			preparedStmt.setDate(13, lookupValueBean.getStartActiveDate() !=null ? new java.sql.Date(lookupValueBean.getStartActiveDate().getTime()) :   null  );
+			preparedStmt.setDate(14, lookupValueBean.getEndActiveDate() !=null ? new java.sql.Date(lookupValueBean.getEndActiveDate().getTime()) :   null  );
+			preparedStmt.setString(15, lookupValueBean.getApproveFlag() != null ? lookupValueBean.getApproveFlag() : "N"    );
+			preparedStmt.setString(16, lookupValueBean.getEnabledFlag() != null ? lookupValueBean.getEnabledFlag() : "Y"    );
 			preparedStmt.setBigDecimal(17, createdBy);
 			preparedStmt.setBigDecimal(18, createdBy);
+			preparedStmt.setBigDecimal(19, createdBy);
 			preparedStmt.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -278,7 +280,7 @@ public class LookupValueDAO {
 		try {
 			dbConn = DBConnection.getConnection();
 			String query = "update lookup_values set meaning = ?, description = ?, tag = ?, attribute1 = ?, attribute2 = ?, attribute3 = ?, attribute4 = ?, attribute5 = ?, start_Date_active = ?, end_date_active = ?, " +
-			"approve_flag = ?, enabled_flag = ?, last_updated_by = ?, last_update_login = ? where lookup_type = ? and language = ? and lookup_code = ?";
+			"approve_flag = ?, enabled_flag = ?, last_updated_by = ?, last_update_login = ? where lookup_type = ? and language = ? and lookup_code = ? and vendor_type = ?";
 			
 			preparedStmt = dbConn.prepareStatement(query);
 			
@@ -303,6 +305,7 @@ public class LookupValueDAO {
 			preparedStmt.setString(15, lookupValueBean.getLookupType());
 			preparedStmt.setString(16, lookupValueBean.getLanguage());
 			preparedStmt.setString(17, lookupValueBean.getLookupCode());
+			preparedStmt.setString(18, lookupValueBean.getVendorType());
 			
 			preparedStmt.executeUpdate();
 			

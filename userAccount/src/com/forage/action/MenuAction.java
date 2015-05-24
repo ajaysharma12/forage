@@ -40,7 +40,7 @@ public class MenuAction {
 	public String addMenuItem(@PathParam("menuitem") String menuItem, 
 								@PathParam("userid") BigDecimal userId){
 		LookupAction lookupAction = new LookupAction();
-		return lookupAction.createLookupCode("MENU_ITEM_TYPES", menuItem, userId);
+		return lookupAction.createLookupCode("TIFFIN", "MENU_ITEM_TYPES", menuItem, userId);
 	}
 	
 	@POST
@@ -49,7 +49,7 @@ public class MenuAction {
 	public String addCuisine(@QueryParam("cuisine") String cuisine, 
 							 @QueryParam("userid") BigDecimal userId){
 		LookupAction lookupAction = new LookupAction();
-		return lookupAction.createLookupCode("CUISINE_TYPE", cuisine, userId);
+		return lookupAction.createLookupCode("TIFFIN", "CUISINE_TYPE", cuisine, userId);
 	}
 	
 	@PUT

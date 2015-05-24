@@ -12,6 +12,7 @@ public class LookupValueBean implements Serializable {
 	private static final long serialVersionUID = 8084337431098056007L;
 
 	String lookupType;
+	String vendorType;
 	String language;
 	String lookupCode;
 	String meaning;
@@ -155,6 +156,12 @@ public class LookupValueBean implements Serializable {
 	}
 	public void setLastUpdateLogin(BigDecimal lastUpdateLogin) {
 		this.lastUpdateLogin = lastUpdateLogin;
+	}
+	public String getVendorType() {
+		return vendorType;
+	}
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
 	}
 
 }
