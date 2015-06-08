@@ -14,6 +14,7 @@ public class VendorBean implements Serializable {
 	
 	BigDecimal vendorId;
 	BigDecimal parentVendorId;
+	String vendorType;
 	String name;
 	String contactPerson;
 	String phoneNumber;
@@ -43,24 +44,6 @@ public class VendorBean implements Serializable {
 	String summary;
 	
 	String status;
-	String menuType;
-	String cuisine;
-	String cuisine2;
-	String cuisine3;
-	String cuisine4;
-	
-	String mealSize1;
-	String mealSize2;
-	String mealSize3;
-	String mealSize4;
-	
-	BigDecimal minPriceMeal;
-	BigDecimal maxPriceMeal;
-	
-	String breakfastTime;
-	String lunchTime;
-	String brunchTime;
-	String dinnerTime;
 	
 	BigDecimal createdBy;
 	Date createdDate;
@@ -71,7 +54,11 @@ public class VendorBean implements Serializable {
 	//calculated columns
 	BigDecimal searchDistance;
 	
-	List<MenuBean> menuList;
+	// Service offered by the vendor
+	List<? extends ServiceBean> serviceList;
+	
+	// Vendor filters
+	FilterBean filterBean;
 	
 	public BigDecimal getVendorId() {
 		return vendorId;
@@ -193,48 +180,6 @@ public class VendorBean implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getMenuType() {
-		return menuType;
-	}
-	public void setMenuType(String menuType) {
-		this.menuType = menuType;
-	}
-	public String getCuisine() {
-		return cuisine;
-	}
-	public void setCuisine(String cuisine) {
-		this.cuisine = cuisine;
-	}
-	public String getCuisine2() {
-		return cuisine2;
-	}
-	public void setCuisine2(String cuisine2) {
-		this.cuisine2 = cuisine2;
-	}
-	public String getCuisine3() {
-		return cuisine3;
-	}
-	public void setCuisine3(String cuisine3) {
-		this.cuisine3 = cuisine3;
-	}
-	public String getCuisine4() {
-		return cuisine4;
-	}
-	public void setCuisine4(String cuisine4) {
-		this.cuisine4 = cuisine4;
-	}
-	public BigDecimal getMinPriceMeal() {
-		return minPriceMeal;
-	}
-	public void setMinPriceMeal(BigDecimal minPriceMeal) {
-		this.minPriceMeal = minPriceMeal;
-	}
-	public BigDecimal getMaxPriceMeal() {
-		return maxPriceMeal;
-	}
-	public void setMaxPriceMeal(BigDecimal maxPriceMeal) {
-		this.maxPriceMeal = maxPriceMeal;
-	}
 	public BigDecimal getCreatedBy() {
 		return createdBy;
 	}
@@ -265,12 +210,6 @@ public class VendorBean implements Serializable {
 	public void setLastLoginDate(Date lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
-	public List<MenuBean> getMenuList() {
-		return menuList;
-	}
-	public void setMenuList(List<MenuBean> menuList) {
-		this.menuList = menuList;
-	}
 	public BigDecimal getProfileImageId() {
 		return profileImageId;
 	}
@@ -295,54 +234,6 @@ public class VendorBean implements Serializable {
 	public void setPhoneNumber3(String phoneNumber3) {
 		this.phoneNumber3 = phoneNumber3;
 	}
-	public String getBreakfastTime() {
-		return breakfastTime;
-	}
-	public void setBreakfastTime(String breakfastTime) {
-		this.breakfastTime = breakfastTime;
-	}
-	public String getLunchTime() {
-		return lunchTime;
-	}
-	public void setLunchTime(String lunchTime) {
-		this.lunchTime = lunchTime;
-	}
-	public String getBrunchTime() {
-		return brunchTime;
-	}
-	public void setBrunchTime(String brunchTime) {
-		this.brunchTime = brunchTime;
-	}
-	public String getDinnerTime() {
-		return dinnerTime;
-	}
-	public void setDinnerTime(String dinnerTime) {
-		this.dinnerTime = dinnerTime;
-	}
-	public String getMealSize1() {
-		return mealSize1;
-	}
-	public void setMealSize1(String mealSize1) {
-		this.mealSize1 = mealSize1;
-	}
-	public String getMealSize2() {
-		return mealSize2;
-	}
-	public void setMealSize2(String mealSize2) {
-		this.mealSize2 = mealSize2;
-	}
-	public String getMealSize3() {
-		return mealSize3;
-	}
-	public void setMealSize3(String mealSize3) {
-		this.mealSize3 = mealSize3;
-	}
-	public String getMealSize4() {
-		return mealSize4;
-	}
-	public void setMealSize4(String mealSize4) {
-		this.mealSize4 = mealSize4;
-	}
 	public String getSummary() {
 		return summary;
 	}
@@ -354,5 +245,23 @@ public class VendorBean implements Serializable {
 	}
 	public void setSearchDistance(BigDecimal searchDistance) {
 		this.searchDistance = searchDistance;
-	}	
+	}
+	public FilterBean getFilterBean() {
+		return filterBean;
+	}
+	public void setFilterBean(FilterBean filterBean) {
+		this.filterBean = filterBean;
+	}
+	public String getVendorType() {
+		return vendorType;
+	}
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
+	}
+	public List<? extends ServiceBean> getServiceList() {
+		return serviceList;
+	}
+	public void setServiceList(List<? extends ServiceBean> serviceList) {
+		this.serviceList = serviceList;
+	}
 }

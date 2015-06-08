@@ -40,25 +40,25 @@ public class DBConnection {
      */
     @SuppressWarnings("finally")
     public static Connection getConnection() throws Exception {
-        Connection con = null;
-        
-        Context initContext = new InitialContext();
-        Context envContext  = (Context)initContext.lookup("java:/comp/env");
-        DataSource ds = (DataSource)envContext.lookup("jdbc/foragedb");
-        con = ds.getConnection();
-        return con;
+//        Connection con = null;
+//        
+//        Context initContext = new InitialContext();
+//        Context envContext  = (Context)initContext.lookup("java:/comp/env");
+//        DataSource ds = (DataSource)envContext.lookup("jdbc/foragedb");
+//        con = ds.getConnection();
+//        return con;
 
         
-//        Connection con = null;
-//        try {
-//            Class.forName(Constants.dbClass);
-//            con = DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
-//        } catch (Exception e) {
-//        	e.printStackTrace();
-//            throw e;
-//        } finally {
-//            return con;
-//        }
+        Connection con = null;
+        try {
+            Class.forName(Constants.dbClass);
+            con = DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            throw e;
+        } finally {
+            return con;
+        }
 
         
         

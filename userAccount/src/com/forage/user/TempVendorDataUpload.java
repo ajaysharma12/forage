@@ -21,9 +21,12 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.forage.action.LookupAction;
 import com.forage.bean.AddressBean;
+import com.forage.bean.FilterBean;
 import com.forage.bean.LookupValueBean;
+import com.forage.bean.TiffinFilterBean;
 import com.forage.bean.VendorBean;
 import com.forage.dao.AddressDAO;
+import com.forage.dao.TiffinFilterDAO;
 import com.forage.dao.VendorDAO;
 
 
@@ -140,17 +143,26 @@ public class TempVendorDataUpload {
 	private void loadData(TempBean tempVend){
 		
 		VendorBean vendor = initiateVendor(tempVend);
+		TiffinFilterBean tiffinFilter = (TiffinFilterBean) vendor.getFilterBean();
+		
+		
 		AddressBean addr = createAddress(tempVend);
 		vendor.setAddress1(addr.getAddressId());
-		vendor.setAddrBean1(addr);
+		vendor.setAddrBean1(addr);		
 		VendorDAO vendorDAO = new VendorDAO();
-		vendorDAO.insert(vendor);		
+		vendor = vendorDAO.insert(vendor);
+		// Insert Vendor Filter
+		
+		BigDecimal vendorNumber = vendor.getVendorId();
+		tiffinFilter.setVendorNumber(vendorNumber);
+		TiffinFilterDAO tiffinFilterDAO = new TiffinFilterDAO();
+		tiffinFilterDAO.insertFilters(tiffinFilter);
 	}
 	
 	private VendorBean initiateVendor(TempBean tempVend){
 		VendorBean vendor = new VendorBean();
 		
-		
+		vendor.setVendorType("TIFFIN");
 		vendor.setName(tempVend.getName());
 		vendor.setEmail(tempVend.getEmail_id());
 		vendor.setContactPerson(tempVend.getContact_name());
@@ -161,6 +173,9 @@ public class TempVendorDataUpload {
 		vendor.setLastGPSLongitude(tempVend.getLongitude());
 		
 		LookupAction lookupAction = new LookupAction();
+		
+		TiffinFilterBean tiffinFilter = new TiffinFilterBean();
+		vendor.setFilterBean(tiffinFilter);
 		
 		String menuCode = null;
 		if(tempVend.getMenu_type() != null){  // check to see the if menu type is registered in the Lookup table	
@@ -173,7 +188,8 @@ public class TempVendorDataUpload {
 					menuCode = lookupAction.getLookupCode("TIFFIN", "FOOD_TYPE", null, tempVend.getMenu_type());
 				}	
 			}
-			vendor.setMenuType(menuCode);
+			tiffinFilter.setMenuType(menuCode);
+//			vendor.setMenuType(menuCode); TODO replace appropriately with TiffinBean and Tiffin DAO
 		}
 		
 		String cuisineCode = null;
@@ -186,31 +202,54 @@ public class TempVendorDataUpload {
 					lookupAction.createLookupCode("TIFFIN", "CUISINE_TYPE", cuisineArray[cuCount], BigDecimal.ONE);
 					cuisineCode = lookupAction.getLookupCode("TIFFIN", "CUISINE_TYPE", null, cuisineArray[cuCount] );
 				}
-				if(cuCount == 0) vendor.setCuisine(cuisineCode);
-				if(cuCount == 1) vendor.setCuisine2(cuisineCode);
-				if(cuCount == 2) vendor.setCuisine3(cuisineCode);
-				if(cuCount == 3) vendor.setCuisine4(cuisineCode);
+				
+				if(cuCount == 0) tiffinFilter.setCuisine1(cuisineCode);	
+				if(cuCount == 1) tiffinFilter.setCuisine2(cuisineCode);	
+				if(cuCount == 2) tiffinFilter.setCuisine3(cuisineCode);	
+				if(cuCount == 3) tiffinFilter.setCuisine4(cuisineCode);	
+				
+//				if(cuCount == 0) vendor.setCuisine(cuisineCode);	TODO replace appropriately with TiffinBean and Tiffin DAO
+//				if(cuCount == 1) vendor.setCuisine2(cuisineCode);	TODO replace appropriately with TiffinBean and Tiffin DAO
+//				if(cuCount == 2) vendor.setCuisine3(cuisineCode);	TODO replace appropriately with TiffinBean and Tiffin DAO
+//				if(cuCount == 3) vendor.setCuisine4(cuisineCode);	TODO replace appropriately with TiffinBean and Tiffin DAO
 				
 			}
 			
 		}
 		
-		if(tempVend.getCost() != null)
-			{
-//			System.out.println(tempVend.getCost().split("[0-9]+")[0]);
-			vendor.setMinPriceMeal(new BigDecimal(tempVend.getCost().split("-")[0]));}
-		else
-			vendor.setMinPriceMeal(BigDecimal.ZERO);
-		
-		if(tempVend.getBreakfast_cost() != null && !"-".equals(tempVend.getBreakfast_cost())){
-			vendor.setBreakfastTime("7:00 AM - 9:00 AM");
+		if (tempVend.getCost() != null) {
+			tiffinFilter.setPriceMealSize1(tempVend.getCost().split("-")[0]);
+		} else
+			tiffinFilter.setPriceMealSize1("0");
+
+		if (tempVend.getBreakfast_cost() != null && !"-".equals(tempVend.getBreakfast_cost())) {
+			tiffinFilter.setBreakfastTime("7:00 AM - 9:00 AM");
 		}
 		if (tempVend.getLunch_cost() != null && !"-".equals(tempVend.getLunch_cost())) {
-			vendor.setLunchTime("12:00 Noon - 3:00 PM");
+			tiffinFilter.setLunchTime("12:00 Noon - 3:00 PM");
 		}
 		if (tempVend.getDinner_cost() != null && !"-".equals(tempVend.getDinner_cost())) {
-			vendor.setDinnerTime("6:00 PM - 9:00 PM");
-		}
+			tiffinFilter.setDinnerTime("6:00 PM - 9:00 PM");
+		}												
+		
+		
+		
+//		if(tempVend.getCost() != null)								TODO replace appropriately with TiffinBean and Tiffin DAO
+//			{
+////			System.out.println(tempVend.getCost().split("[0-9]+")[0]);
+//			vendor.setMinPriceMeal(new BigDecimal(tempVend.getCost().split("-")[0]));}
+//		else
+//			vendor.setMinPriceMeal(BigDecimal.ZERO);
+//		
+//		if(tempVend.getBreakfast_cost() != null && !"-".equals(tempVend.getBreakfast_cost())){
+//			vendor.setBreakfastTime("7:00 AM - 9:00 AM");
+//		}
+//		if (tempVend.getLunch_cost() != null && !"-".equals(tempVend.getLunch_cost())) {
+//			vendor.setLunchTime("12:00 Noon - 3:00 PM");
+//		}
+//		if (tempVend.getDinner_cost() != null && !"-".equals(tempVend.getDinner_cost())) {
+//			vendor.setDinnerTime("6:00 PM - 9:00 PM");
+//		}															TODO replace appropriately with TiffinBean and Tiffin DAO
 		vendor.setApproveFlag("Y");
 		vendor.setActiveFlag("Y");
 		
@@ -219,7 +258,7 @@ public class TempVendorDataUpload {
 	
 	private AddressBean createAddress(TempBean tempVend){
 		AddressBean addr = new AddressBean();
-		addr.setCity("INDIA");
+		addr.setCountry("INDIA");
 		String[] tokens = tempVend.getAddress().split(",");
 		for (int i = 0; i < tokens.length; i++) {
 			switch(i){
